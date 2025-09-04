@@ -1,0 +1,41 @@
+1,Driver,2271,-,4.3,19,419,0.64,0.1,10,0.12,1,Eligible
+2,Driver,1342,Stable,4.3,7,315,0.27,0.43,5,0.3,1,Not Eligible
+3,Driver,2126,Stable,3.7,2,593,0.44,0.1,10,0.3,0,Not Eligible
+4,Driver,1898,Stable,4.5,27,447,0.6,0.1,12,0.03,1,Eligible
+5,Driver,2174,Variable,4.6,36,608,0.82,0.1,15,0.04,0,Eligible
+6,Driver,1775,Seasonal,4.3,20,402,0.56,0.22,10,0.22,0,Not Eligible
+7,Driver,1028,Stable,4.2,1,290,0.18,0.42,3,0.13,0,Not Eligible
+8,Merchant,1324,Variable,4.3,9,343,0.28,0.35,3,0.17,0,Not Eligible
+9,Merchant,1039,Variable,4.6,27,332,0.4,0.47,6,0.17,0,Not Eligible
+10,Driver,2151,Stable,3.4,1,474,0.63,0.1,1,0.22,0,Not Eligible
+11,Merchant,1372,Stable,4.0,11,338,0.49,0.3,11,0.1,0,Not Eligible
+12,Driver,1901,Variable,4.7,46,544,0.8,0.14,14,0.12,1,Eligible
+13,Driver,1667,Seasonal,4.9,36,433,0.57,0.21,11,0.0,1,Eligible
+14,Driver,1840,Seasonal,3.8,13,386,0.5,0.1,10,0.4,0,Not Eligible
+15,Driver,1003,Stable,4.9,43,303,0.54,0.31,11,0.2,1,Eligible
+16,Driver,2354,Seasonal,4.9,47,512,0.88,0.1,15,0.0,1,Eligible
+17,Driver,2014,Seasonal,4.1,10,436,0.6,0.1,11,0.08,0,Not Eligible
+18,Driver,1822,Seasonal,4.6,31,505,0.72,0.1,13,0.15,1,Eligible
+19,Driver,1386,Seasonal,4.7,45,323,0.52,0.29,12,0.0,1,Eligible
+1,Merchant,2461,Stable,4.8,48,484,0.96,0.1,14,0.12,0,Eligible
+21,Driver,1898,Stable,4.5,27,447,0.6,0.1,15,0.04,0,not eligible
+21,Driver,1898,Stable,4.5,27,447,0.6,0.1,15,0.04,1,not eligible
+21,Driver,1898,Stable,4.5,27,447,0.6,0.1,12,0.04,1,not eligible
+21,Driver,1898,Stable,4.5,27,447,0.6,0.1,12,0.03,1,not eligible
+21,Driver,1898,Stable,4.5,27,447,0.6,0.1,12,0.03,0,not eligible
+4,Driver,1898,Stable,4.5,27,447,0.6,0.1,12,0.03,1,not eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,not eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,not eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,not eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,not eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,not eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,1898,Stable,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,189,Seasonal,4.5,28,447,0.6,0.1,12,0.03,eligible
+Driver,189,Seasonal,4.5,2,44,0.6,0.1,1,0.03,eligible
+Driver,189,Seasonal,4.5,2,44,0.6,0.1,1,0.09,not eligible

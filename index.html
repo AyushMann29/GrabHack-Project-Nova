@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova: Loan Eligibility Checker</title>
+    <!-- Use Tailwind CSS for modern, responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .table-auto {
+            table-layout: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl p-8 max-w-4xl w-full">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800">Nova: Loan Eligibility Checker</h1>
+            <p class="text-gray-600 mt-2">Enter your data to check your loan eligibility.</p>
+        </header>
+
+        <!-- Section to display model metrics -->
+        <section id="metrics-section" class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200 hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Model Performance Metrics</h2>
+            <div id="metrics-data" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+                <!-- Data will be populated here by JavaScript -->
+            </div>
+            <p class="text-xs text-gray-500 mt-4">
+                These metrics represent the model's performance on a historical dataset.
+            </p>
+        </section>
+
+        <!-- Tabs for Single Entry vs. CSV Upload -->
+        <div class="mb-8">
+            <div class="flex border-b border-gray-200">
+                <button id="tab-single" class="tab-button py-2 px-4 text-sm font-medium border-b-2 border-blue-600 text-blue-600 transition-colors duration-200">Single Entry</button>
+                <button id="tab-csv" class="tab-button py-2 px-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors duration-200">Upload CSV</button>
+            </div>
+        </div>
+
+        <!-- Single Entry Form -->
+        <section id="single-entry-form" class="space-y-6">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Your Information</h2>
+            <form id="loan-form" class="space-y-6">
+                <!-- All input fields as before -->
+                <!-- <div>
+                    <label for="Partner ID" class="block text-sm font-medium text-gray-700 mb-1">Partner ID</label>
+                    <input type="text" id="partnerId" name="Partner ID" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div> -->
+                <div>
+                    <label for="partnerType" class="block text-sm font-medium text-gray-700 mb-1">Partner Type</label>
+                    <select id="partnerType" name="Partner Type" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                        <option value="">Select a type...</option>
+                        <option value="Merchant">Merchant</option>
+                        <option value="Driver">Driver</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="earningsValue" class="block text-sm font-medium text-gray-700 mb-1">Earnings (Value)</label>
+                    <input type="number" id="earningsValue" name="Earnings (Value)" required min="0"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="earningsStability" class="block text-sm font-medium text-gray-700 mb-1">Earnings (Stability Type)</label>
+                    <select id="earningsStability" name="Earnings (Stability Type)" required
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                        <option value="">Select stability...</option>
+                        <option value="Stable">Stable</option>
+                        <option value="Variable">Variable</option>
+                        <option value="Seasonal">Seasonal</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="perfRating" class="block text-sm font-medium text-gray-700 mb-1">Performance Rating (Avg)</label>
+                    <input type="number" id="perfRating" name="Perf. Rating (Avg)" required min="1" max="5" step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="timeOnPlatform" class="block text-sm font-medium text-gray-700 mb-1">Time on Platform (Months)</label>
+                    <input type="number" id="timeOnPlatform" name="Time on Platform (Months)" required min="0"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="volume" class="block text-sm font-medium text-gray-700 mb-1">Order/Trip Volume</label>
+                    <input type="number" id="volume" name="Order/Trip Volume" required min="0"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="financialActivity" class="block text-sm font-medium text-gray-700 mb-1">Financial Activity (Score)</label>
+                    <input type="number" id="financialActivity" name="Financial Activity (Score)" required min="0" max="1" step="0.1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="earningsVolatility" class="block text-sm font-medium text-gray-700 mb-1">Earnings Volatility</label>
+                    <input type="number" id="earningsVolatility" name="Earnings Volatility" required min="0"  step="0.01"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="repayments" class="block text-sm font-medium text-gray-700 mb-1">On-Time Loan Repayments</label>
+                    <input type="number" id="repayments" name="On-Time Loan Repayments" required min="0" step="1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <div>
+                    <label for="anomalyScore" class="block text-sm font-medium text-gray-700 mb-1">Operational Anomaly Score</label>
+                    <input type="number" id="anomalyScore" name="Operational Anomaly Score" required min="0" max="1" step="0.01"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div>
+                <!-- <div>
+                    <label for="Creditworthy" class="block text-sm font-medium text-gray-700 mb-1">Creditworthy</label>
+                    <input type="number" id="Creditworthy" name="Creditworthy" required min="0" max="1" step="1"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-3 focus:border-indigo-500 focus:ring-indigo-500 border">
+                </div> -->
+                
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">
+                    Check Eligibility
+                </button>
+            </form>
+        </section>
+        
+        <!-- CSV Upload Form -->
+        <section id="csv-upload-form" class="hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Upload a CSV File</h2>
+            <form id="csv-form" class="space-y-6">
+                <div>
+                    <label for="csvFile" class="block text-sm font-medium text-gray-700 mb-1">Select CSV File</label>
+                    <input type="file" id="csvFile" name="file" accept=".csv" required
+                        class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-md hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">
+                    Process CSV
+                </button>
+            </form>
+        </section>
+
+        <!-- Section to display the prediction result -->
+        <section id="result-section" class="mt-8">
+            <div id="prediction-result" class="p-6 text-center text-lg font-semibold rounded-lg hidden">
+                <!-- The prediction result will be displayed here -->
+            </div>
+            <div id="csv-results-table" class="mt-6 hidden">
+                <!-- The CSV results table will be displayed here -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabSingle = document.getElementById('tab-single');
+            const tabCsv = document.getElementById('tab-csv');
+            const singleEntryForm = document.getElementById('single-entry-form');
+            const csvUploadForm = document.getElementById('csv-upload-form');
+            const form = document.getElementById('loan-form');
+            const csvForm = document.getElementById('csv-form');
+            const metricsSection = document.getElementById('metrics-section');
+            const metricsData = document.getElementById('metrics-data');
+            const predictionResult = document.getElementById('prediction-result');
+            const csvResultsTable = document.getElementById('csv-results-table');
+
+            // Tab switching logic
+            tabSingle.addEventListener('click', () => {
+                tabSingle.classList.add('border-blue-600', 'text-blue-600');
+                tabCsv.classList.remove('border-blue-600', 'text-blue-600');
+                tabCsv.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+                singleEntryForm.classList.remove('hidden');
+                csvUploadForm.classList.add('hidden');
+                predictionResult.classList.add('hidden');
+                csvResultsTable.classList.add('hidden');
+            });
+
+            tabCsv.addEventListener('click', () => {
+                tabCsv.classList.add('border-blue-600', 'text-blue-600');
+                tabSingle.classList.remove('border-blue-600', 'text-blue-600');
+                tabSingle.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+                csvUploadForm.classList.remove('hidden');
+                singleEntryForm.classList.add('hidden');
+                predictionResult.classList.add('hidden');
+                csvResultsTable.classList.add('hidden');
+            });
+            
+
+            // Function to display the model metrics
+            function displayMetrics(metrics) {
+                metricsSection.classList.remove('hidden');
+                metricsData.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <svg class="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="font-medium">Accuracy: <span class="text-blue-600">${(metrics.accuracy * 100).toFixed(2)}%</span></p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM11 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM11 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM5 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z" />
+                        </svg>
+                        <p class="font-medium">Precision: <span class="text-blue-600">${(metrics.precision * 100).toFixed(2)}%</span></p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="h-6 w-6 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                        </svg>
+                        <p class="font-medium">Recall: <span class="text-blue-600">${(metrics.recall * 100).toFixed(2)}%</span></p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <svg class="h-6 w-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                            <path d="M10 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z" />
+                        </svg>
+                        <p class="font-medium">F1-Score: <span class="text-blue-600">${(metrics.f1_score * 100).toFixed(2)}%</span></p>
+                    </div>
+                `;
+            }
+
+            // Handle single entry form submission
+// Add this helper function
+function convertToNumbers(data) {
+    const numericKeys = [
+        "Earnings (Value)",
+        "Perf. Rating (Avg)",
+        "Time on Platform (Months)",
+        "Order/Trip Volume",
+        "Financial Activity (Score)",
+        "Earnings Volatility",
+        "On-Time Loan Repayments",
+        "Operational Anomaly Score"
+    ];
+    
+    // Create a copy to avoid modifying the original data object
+    const newData = { ...data };
+
+    for (const key of numericKeys) {
+        if (newData[key] !== undefined) {
+            // Use parseFloat for decimals and parseInt for integers
+            if (key.includes("Score") || key.includes("Volatility") || key.includes("Rating")) {
+                newData[key] = parseFloat(newData[key]);
+            } else {
+                newData[key] = parseInt(newData[key], 10);
+            }
+        }
+    }
+    return newData;
+}
+
+// Modify your single entry form submission listener
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // ... your existing code ...
+    
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+
+    // Call the new function to convert values to numbers
+    const processedData = convertToNumbers(data);
+
+    const backendEndpoint = 'http://localhost:5000/predict';
+    // Prepare UI
+    predictionResult.classList.remove('hidden');
+    predictionResult.textContent = 'Checking eligibility...';
+    predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+    try {
+        const response = await fetch(backendEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(processedData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        // The new debugging line 👇
+        console.log("Backend response received:", result);
+
+        displayMetrics(result.metrics);
+
+        const predictionValue = (result && result.prediction) ? String(result.prediction).toLowerCase() : '';
+        // Reset classes before applying new ones
+        predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+        if (predictionValue === 'eligible') {
+            predictionResult.textContent = 'Congratulations! You are eligible for a loan.';
+            predictionResult.classList.add('bg-green-100', 'text-green-800');
+        } else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
+            predictionResult.textContent = "We're sorry, you are not eligible for a loan at this time.";
+            predictionResult.classList.add('bg-red-100', 'text-red-800');
+        } else {
+            predictionResult.textContent = 'Received a response from the backend, but no prediction was found.';
+            predictionResult.classList.add('bg-red-100', 'text-red-800');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        predictionResult.textContent = `There was a problem checking your eligibility. Please ensure the backend is running at ${backendEndpoint}.`;
+        predictionResult.classList.add('bg-red-100', 'text-red-800');
+    }
+});
+
+            // Handle CSV form submission
+            csvForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                predictionResult.classList.remove('hidden');
+                predictionResult.innerHTML = 'Processing CSV file...';
+                predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+                csvResultsTable.classList.add('hidden');
+
+                const csvFile = document.getElementById('csvFile').files[0];
+                if (!csvFile) {
+                    predictionResult.textContent = 'Please select a CSV file to upload.';
+                    predictionResult.classList.add('bg-red-100', 'text-red-800');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('file', csvFile);
+
+                const backendEndpoint = 'http://localhost:5000/predict_csv'; 
+                try {
+                    const response = await fetch(backendEndpoint, {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+
+                    displayMetrics(result.metrics);
+                    displayCsvResults(result.predictions);
+                    
+                    predictionResult.classList.add('hidden');
+
+                } catch (error) {
+                    console.error('Error:', error);
+                    predictionResult.textContent = `There was a problem processing the CSV file. Please ensure the backend is running at ${backendEndpoint}.`;
+                    predictionResult.classList.add('bg-red-100', 'text-red-800');
+                }
+            });
+
+            function displayCsvResults(predictions) {
+                csvResultsTable.classList.remove('hidden');
+                let html = `<div class="overflow-x-auto rounded-lg shadow-md">
+                                <table class="min-w-full table-auto divide-y divide-gray-200">
+                                    <thead class="bg-gray-200">
+                                        <tr>`;
+                
+                // Create table headers
+                if (predictions.length > 0) {
+                    const headers = Object.keys(predictions[0]);
+                    headers.forEach(header => {
+                        html += `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">${header}</th>`;
+                    });
+                }
+                html += `</tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">`;
+
+                // Create table rows with data
+                predictions.forEach(row => {
+                    html += `<tr>`;
+                    Object.values(row).forEach(value => {
+                        html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${value}</td>`;
+                    });
+                    html += `</tr>`;
+                });
+
+                html += `</tbody></table></div>`;
+                csvResultsTable.innerHTML = html;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,238 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from xgboost import XGBClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from io import StringIO
+import os # Import the os module
+
+# ==============================================================================
+# Step 1: Initialize Flask App and Model Variables
+# ==============================================================================
+app = Flask(__name__)
+CORS(app)  # Enable CORS to allow the frontend to access this API
+
+# Global variables to hold the trained model and features
+model = None
+train_features_columns = None
+evaluation_metrics = {}
+
+# ==============================================================================
+# Step 2: Core ML Functions (from your original script)
+# ==============================================================================
+def load_and_preprocess_data(csv_path):
+    """
+    Loads and preprocesses the dataset.
+    """
+    try:
+        df = pd.read_csv(csv_path)
+    except FileNotFoundError:
+        print(f"Error: The file {csv_path} was not found.")
+        return None, None
+    
+    target_column = 'Creditworthy'
+    
+    # Drop columns that are not features for the model
+    df = df.drop(columns=['Partner ID'], errors='ignore')
+    
+    # Identify non-numeric columns
+    categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
+    
+    # One-hot encode categorical features
+    df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
+    
+    # Ensure all remaining feature columns are numeric
+    for col in df.columns:
+        if col != target_column:
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+    
+    # Drop any rows that now have NaN values after the coercion
+    df = df.dropna()
+    
+    return df, target_column
+
+def train_model(df, target_column):
+    """
+    Splits data and trains an XGBoost classifier.
+    """
+    X = df.drop(target_column, axis=1)
+    y = df[target_column]
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    model = XGBClassifier(eval_metric='logloss')
+    model.fit(X_train, y_train)
+    
+    return model, X_test, y_test
+
+def evaluate_model(model, X_test, y_test):
+    """
+    Evaluates the trained model using key metrics.
+    Returns the metrics as a dictionary.
+    """
+    y_pred = model.predict(X_test)
+    evaluation_metrics = {
+        'accuracy': accuracy_score(y_test, y_pred),
+        'precision': precision_score(y_test, y_pred),
+        'recall': recall_score(y_test, y_pred),
+        'f1_score': f1_score(y_test, y_pred)
+    }
+    return evaluation_metrics
+
+def preprocess_user_data(user_df, train_columns):
+    """
+    Prepares the user's data to match the format of the training data.
+    """
+    # Identify and one-hot encode categorical features from the user's data
+    categorical_cols = user_df.select_dtypes(include=['object']).columns.tolist()
+    user_df = pd.get_dummies(user_df, columns=categorical_cols, drop_first=True)
+    
+    # Identify which columns are in the training data but not the user data
+    missing_cols = set(train_columns) - set(user_df.columns)
+    
+    # Add any missing columns from the training data with default value 0
+    for c in missing_cols:
+        user_df[c] = 0
+    
+    # Drop any extra columns from the user data that were not in the training data
+    # This is crucial for single-entry data
+    extra_cols = set(user_df.columns) - set(train_columns)
+    user_df = user_df.drop(columns=list(extra_cols), errors='ignore')
+    
+    # Reorder columns to match the training data
+    user_df = user_df[train_columns]
+    
+    return user_df
+
+# ==============================================================================
+# Step 2.5: New Function to Save Data to CSV
+# ==============================================================================
+def save_to_csv(data_df, filename='online_testcases.csv'):
+    """
+    Saves a DataFrame to a CSV file.
+    If the file exists, it appends without writing the header.
+    If the file does not exist, it creates a new file with a header.
+    """
+    file_exists = os.path.isfile(filename)
+    data_df.to_csv(filename, mode='a', header=not file_exists, index=False)
+    print(f"Data successfully saved to {filename}")
+
+# ==============================================================================
+# Step 3: API Endpoint for Prediction (Single Input)
+# ==============================================================================
+@app.route('/predict', methods=['POST'])
+def predict():
+    """
+    Endpoint to receive a single user input, make a prediction, and return metrics.
+    """
+    # Check if global variables are None. This is the correct way to handle this.
+    if model is None or train_features_columns is None or evaluation_metrics is None:
+        return jsonify({'error': 'Model is not trained or loaded. Please check backend logs.'}), 500
+
+    try:
+        user_input = request.json
+        user_df = pd.DataFrame([user_input])
+
+        # Preprocess the user's data to match the training data format
+        user_features_processed = preprocess_user_data(user_df.copy(), train_features_columns)
+        
+        # Make the prediction
+        prediction = model.predict(user_features_processed)
+        result = "eligible" if prediction[0] == 1 else "not eligible"
+
+        # Add prediction to the original DataFrame for logging
+        user_df['Creditworthy_Prediction'] = result
+        
+        # Save the original user input plus prediction to the CSV file
+        save_to_csv(user_df)
+
+        # Return the prediction and evaluation metrics
+        return jsonify({
+            'prediction': result,
+            'metrics': evaluation_metrics
+        })
+
+    except Exception as e:
+        # Gracefully handle any errors during the process
+        return jsonify({'error': str(e)}), 500
+
+# ==============================================================================
+# Step 4: API Endpoint for Bulk Prediction (CSV Upload)
+# ==============================================================================
+@app.route('/predict_csv', methods=['POST'])
+def predict_csv():
+    """
+    Endpoint to receive a CSV file, make bulk predictions, and return results.
+    """
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part in the request'}), 400
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+
+    if file:
+        try:
+            # Read the CSV file from the request
+            csv_data = StringIO(file.read().decode('utf-8'))
+            input_df = pd.read_csv(csv_data)
+
+            # Preprocess the entire DataFrame
+            user_features_processed = preprocess_user_data(input_df.copy(), train_features_columns)
+            
+            # Make the predictions
+            predictions = model.predict(user_features_processed)
+            
+            # Add the predictions to the original DataFrame
+            input_df['Creditworthy_Prediction'] = np.where(predictions == 1, 'Eligible', 'Not Eligible')
+
+            # Save the entire DataFrame to the CSV file
+            save_to_csv(input_df)
+
+            # Convert DataFrame to a list of dictionaries for JSON response
+            results = input_df.to_dict('records')
+            
+            return jsonify({
+                'predictions': results,
+                'metrics': evaluation_metrics
+            })
+        except Exception as e:
+            return jsonify({'error': f"Error processing file: {str(e)}"}), 500
+    
+    return jsonify({'error': 'An unknown error occurred.'}), 500
+
+
+# ==============================================================================
+# Step 5: Main function to train the model once and run the server
+# ==============================================================================
+def main():
+    """
+    Initializes the model and runs the Flask server.
+    """
+    global model, train_features_columns, evaluation_metrics
+
+    print("--- Starting the Nova Backend ---")
+    print("Step 1: Loading and preprocessing data...")
+    train_df, target_column = load_and_preprocess_data('catalyst_train.csv')
+    
+    if train_df is None:
+        print("Please ensure 'catalyst_train.csv' exists. Exiting.")
+        return
+        
+    print("Step 2: Training the model and evaluating performance...")
+    model, X_test, y_test = train_model(train_df, target_column)
+    train_features_columns = train_df.drop(columns=[target_column]).columns
+    evaluation_metrics = evaluate_model(model, X_test, y_test)
+    
+    print("\nModel trained successfully! Metrics:")
+    for key, value in evaluation_metrics.items():
+        print(f"- {key.capitalize()}: {value:.4f}")
+    
+    print("\n--- Starting Flask server on http://127.0.0.1:5000 ---")
+    # This will serve the API, ready to accept requests from the frontend
+    app.run(debug=True, port=5000)
+
+if __name__ == "__main__":
+    main()
