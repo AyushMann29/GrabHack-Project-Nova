@@ -1,5 +1,14 @@
-from fairlearn.metrics import MetricFrame, selection_rate
+from fairlearn.metrics import MetricFrame, selection_rate, true_positive_rate
 from sklearn.metrics import accuracy_score
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from xgboost import XGBClassifier
+from sklearn.metrics import precision_score, recall_score, f1_score
+from io import StringIO
+import os
 
 # ===============================================================================
 # Input Validation Functions
@@ -27,15 +36,6 @@ def validate_input(data, trips_col='Number of Trips', earnings_col='Earnings', m
             if not invalid_earnings.empty:
                 return False, f"Invalid earnings in rows: {invalid_earnings.index.tolist()}"
     return True, None
-from flask import Flask, request, jsonify
-from flask_cors import CORS
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from io import StringIO
-import os # Import the os module
 
 # ==============================================================================
 # Step 1: Initialize Flask App and Model Variables
@@ -60,26 +60,26 @@ def load_and_preprocess_data(csv_path):
     except FileNotFoundError:
         print(f"Error: The file {csv_path} was not found.")
         return None, None
-    
+
     target_column = 'Creditworthy'
-    
+
     # Drop columns that are not features for the model
     df = df.drop(columns=['Partner ID'], errors='ignore')
-    
+
     # Identify non-numeric columns
     categorical_cols = df.select_dtypes(include=['object']).columns.tolist()
-    
+
     # One-hot encode categorical features
     df = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
-    
+
     # Ensure all remaining feature columns are numeric
     for col in df.columns:
         if col != target_column:
             df[col] = pd.to_numeric(df[col], errors='coerce')
-    
+
     # Drop any rows that now have NaN values after the coercion
     df = df.dropna()
-    
+
     return df, target_column
 
 def train_model(df, target_column):
@@ -88,12 +88,12 @@ def train_model(df, target_column):
     """
     X = df.drop(target_column, axis=1)
     y = df[target_column]
-    
+
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    
+
     model = XGBClassifier(eval_metric='logloss')
     model.fit(X_train, y_train)
-    
+
     return model, X_test, y_test
 
 def evaluate_model(model, X_test, y_test):
@@ -123,13 +123,6 @@ def evaluate_model(model, X_test, y_test):
                          sensitive_features=sensitive_attr)
         print("\nFairness metrics by group (Fairlearn):")
         print(mf.by_group)
-        try:
-            import matplotlib.pyplot as plt
-            mf.by_group.plot(kind="bar", subplots=True)
-            plt.suptitle("Group Fairness Metrics")
-            plt.show()
-        except ImportError:
-            print("matplotlib not installed, skipping plot.")
     else:
         print("No sensitive attribute found for group fairness metrics.")
     return evaluation_metrics
@@ -141,22 +134,22 @@ def preprocess_user_data(user_df, train_columns):
     # Identify and one-hot encode categorical features from the user's data
     categorical_cols = user_df.select_dtypes(include=['object']).columns.tolist()
     user_df = pd.get_dummies(user_df, columns=categorical_cols, drop_first=True)
-    
+
     # Identify which columns are in the training data but not the user data
     missing_cols = set(train_columns) - set(user_df.columns)
-    
+
     # Add any missing columns from the training data with default value 0
     for c in missing_cols:
         user_df[c] = 0
-    
+
     # Drop any extra columns from the user data that were not in the training data
     # This is crucial for single-entry data
     extra_cols = set(user_df.columns) - set(train_columns)
     user_df = user_df.drop(columns=list(extra_cols), errors='ignore')
-    
+
     # Reorder columns to match the training data
     user_df = user_df[train_columns]
-    
+
     return user_df
 
 # ==============================================================================
@@ -185,7 +178,6 @@ def predict():
         return jsonify({'error': 'Model is not trained or loaded. Please check backend logs.'}), 500
 
     try:
-
         user_input = request.json
         # Input validation
         valid, error_msg = validate_input(user_input)
@@ -222,7 +214,7 @@ def predict_csv():
     """
     if 'file' not in request.files:
         return jsonify({'error': 'No file part in the request'}), 400
-    
+
     file = request.files['file']
     if file.filename == '':
         return jsonify({'error': 'No selected file'}), 400
@@ -247,14 +239,15 @@ def predict_csv():
             save_to_csv(input_df)
 
             # --- Fairness & Bias Reporting ---
-            from fairlearn.metrics import MetricFrame, selection_rate, true_positive_rate
             sensitive_col = 'Partner Type'
             fairness_metrics = {}
             fairness_observation = None
             if sensitive_col in input_df.columns:
+                # Need to handle potential one-hot encoding if it was present
                 y_true = input_df['Creditworthy']
                 y_pred = (input_df['Creditworthy_Prediction'] == 'Eligible').astype(int)
                 sensitive_features = input_df[sensitive_col]
+
                 # Demographic Parity (selection_rate) and Equal Opportunity (true_positive_rate)
                 mf = MetricFrame(
                     metrics={
@@ -269,14 +262,18 @@ def predict_csv():
                     'selection_rate': mf.by_group['selection_rate'].to_dict(),
                     'equal_opportunity': mf.by_group['equal_opportunity'].to_dict()
                 }
-                 # Observations
+
+                # Observations
                 rates = mf.by_group['selection_rate']
-                max_group = rates.idxmax()
-                min_group = rates.idxmin()
-                diff = rates[max_group] - rates[min_group]
-                fairness_observation = f"{max_group} group approval rate is {diff:.2%} higher than {min_group} group."
-                if abs(diff) > 0.1:
-                    fairness_observation += " Mitigation recommended: Consider reweighting or post-processing."
+                if not rates.empty:
+                    max_group = rates.idxmax()
+                    min_group = rates.idxmin()
+                    diff = rates[max_group] - rates[min_group]
+                    fairness_observation = f"{max_group} group approval rate is {diff:.2%} higher than {min_group} group."
+                    if abs(diff) > 0.1:
+                        fairness_observation += " Mitigation recommended: Consider reweighting or post-processing."
+                    else:
+                        fairness_observation += " The model appears to be fair with respect to this metric."
 
             # Convert DataFrame to a list of dictionaries for JSON response
             results = input_df.to_dict('records')
@@ -288,7 +285,7 @@ def predict_csv():
             })
         except Exception as e:
             return jsonify({'error': f"Error processing file: {str(e)}"}), 500
-    
+
     return jsonify({'error': 'An unknown error occurred.'}), 500
 
 
@@ -304,23 +301,23 @@ def main():
     print("--- Starting the Nova Backend ---")
     print("Step 1: Loading and preprocessing data...")
     train_df, target_column = load_and_preprocess_data('catalyst_train.csv')
-    
+
     if train_df is None:
         print("Please ensure 'catalyst_train.csv' exists. Exiting.")
         return
-        
+
     print("Step 2: Training the model and evaluating performance...")
     model, X_test, y_test = train_model(train_df, target_column)
     train_features_columns = train_df.drop(columns=[target_column]).columns
     evaluation_metrics = evaluate_model(model, X_test, y_test)
-    
+
     print("\nModel trained successfully! Metrics:")
     for key, value in evaluation_metrics.items():
         print(f"- {key.capitalize()}: {value:.4f}")
-    
+
     print("\n--- Starting Flask server on http://127.0.0.1:5000 ---")
     # This will serve the API, ready to accept requests from the frontend
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5000, use_reloader=False)
 
 if __name__ == "__main__":
     main()

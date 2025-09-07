@@ -1,6 +1,6 @@
 Partner ID,Partner Type,Earnings (Value),Earnings (Stability Type),Perf. Rating (Avg),Time on Platform (Months),Order/Trip Volume,Financial Activity (Score),Earnings Volatility,On-Time Loan Repayments,Operational Anomaly Score,Creditworthy
-00001,Driver,2271,-,4.3,19,419,0.64,0.1,10,0.12,1
-00002,Driver,1342,Stable,4.3,7,315,0.27,0.43,5,0.3,1
+00001,Merchant,2271,-,4.3,19,419,0.64,0.1,10,0.12,1
+00002,Merchant,1342,Stable,4.3,7,315,0.27,0.43,5,0.3,1
 00003,Driver,2126,Stable,3.7,2,593,0.44,0.1,10,0.3,0
 00004,Driver,1898,Stable,4.5,27,447,0.6,0.1,12,0.03,1
 00005,Driver,2174,Variable,4.6,36,608,0.82,0.1,15,0.04,0
