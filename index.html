@@ -1,3 +1,63 @@
+        <!-- Section to display Fairness Metrics (Table and Chart) -->
+        <section id="fairness-section" class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200 hidden">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Fairness Metrics by Group</h2>
+            <div id="fairness-table" class="mb-6"></div>
+            <canvas id="fairness-chart" height="200"></canvas>
+            <div id="fairness-observation" class="mt-4 text-gray-700 font-medium"></div>
+        </section>
+    <!-- Chart.js for fairness chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fairness Metrics Display Script -->
+    <script>
+    function displayFairnessMetrics(fairnessMetrics, fairnessObservation) {
+        const fairnessSection = document.getElementById('fairness-section');
+        const fairnessTable = document.getElementById('fairness-table');
+        const fairnessChart = document.getElementById('fairness-chart');
+        const fairnessObservationDiv = document.getElementById('fairness-observation');
+        if (!fairnessMetrics || !fairnessMetrics.selection_rate) {
+            fairnessSection.classList.add('hidden');
+            return;
+        }
+        // Show section
+        fairnessSection.classList.remove('hidden');
+        // Table
+        let html = `<table class="min-w-full table-auto divide-y divide-gray-200"><thead><tr><th class="px-4 py-2">Group</th><th class="px-4 py-2">Selection Rate</th><th class="px-4 py-2">Equal Opportunity</th></tr></thead><tbody>`;
+        const groups = Object.keys(fairnessMetrics.selection_rate);
+        groups.forEach(group => {
+            html += `<tr><td class="px-4 py-2">${group}</td><td class="px-4 py-2">${(fairnessMetrics.selection_rate[group]*100).toFixed(2)}%</td><td class="px-4 py-2">${(fairnessMetrics.equal_opportunity[group]*100).toFixed(2)}%</td></tr>`;
+        });
+        html += '</tbody></table>';
+        fairnessTable.innerHTML = html;
+        // Chart
+        const chartData = {
+            labels: groups,
+            datasets: [
+                {
+                    label: 'Selection Rate',
+                    data: groups.map(g => fairnessMetrics.selection_rate[g]),
+                    backgroundColor: 'rgba(59,130,246,0.7)'
+                },
+                {
+                    label: 'Equal Opportunity',
+                    data: groups.map(g => fairnessMetrics.equal_opportunity[g]),
+                    backgroundColor: 'rgba(16,185,129,0.7)'
+                }
+            ]
+        };
+        if (window.fairnessChartInstance) window.fairnessChartInstance.destroy();
+        window.fairnessChartInstance = new Chart(fairnessChart, {
+            type: 'bar',
+            data: chartData,
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true, max: 1 } }
+            }
+        });
+        // Observation
+        fairnessObservationDiv.textContent = fairnessObservation || '';
+    }
+    </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -313,6 +373,7 @@ form.addEventListener('submit', async (e) => {
                 predictionResult.innerHTML = 'Processing CSV file...';
                 predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
                 csvResultsTable.classList.add('hidden');
+                document.getElementById('fairness-section').classList.add('hidden');
 
                 const csvFile = document.getElementById('csvFile').files[0];
                 if (!csvFile) {
@@ -339,7 +400,7 @@ form.addEventListener('submit', async (e) => {
 
                     displayMetrics(result.metrics);
                     displayCsvResults(result.predictions);
-                    
+                    displayFairnessMetrics(result.fairness_metrics, result.fairness_observation);
                     predictionResult.classList.add('hidden');
 
                 } catch (error) {

@@ -1,3 +1,32 @@
+from fairlearn.metrics import MetricFrame, selection_rate
+from sklearn.metrics import accuracy_score
+
+# ===============================================================================
+# Input Validation Functions
+# ===============================================================================
+def validate_input(data, trips_col='Number of Trips', earnings_col='Earnings', min_trips=0, max_trips=1000, min_earnings=0, max_earnings=100000):
+    """
+    Validates input data for negative trips and unrealistic earnings.
+    Returns (True, None) if valid, else (False, error_message).
+    """
+    # Check for single row (dict or DataFrame)
+    if isinstance(data, dict):
+        trips = data.get(trips_col, None)
+        earnings = data.get(earnings_col, None)
+        if trips is not None and (trips < min_trips or trips > max_trips):
+            return False, f"Invalid number of trips: {trips}. Must be between {min_trips} and {max_trips}."
+        if earnings is not None and (earnings < min_earnings or earnings > max_earnings):
+            return False, f"Invalid earnings: {earnings}. Must be between {min_earnings} and {max_earnings}."
+    elif isinstance(data, pd.DataFrame):
+        if trips_col in data.columns:
+            invalid_trips = data[(data[trips_col] < min_trips) | (data[trips_col] > max_trips)]
+            if not invalid_trips.empty:
+                return False, f"Invalid number of trips in rows: {invalid_trips.index.tolist()}"
+        if earnings_col in data.columns:
+            invalid_earnings = data[(data[earnings_col] < min_earnings) | (data[earnings_col] > max_earnings)]
+            if not invalid_earnings.empty:
+                return False, f"Invalid earnings in rows: {invalid_earnings.index.tolist()}"
+    return True, None
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
@@ -79,6 +108,30 @@ def evaluate_model(model, X_test, y_test):
         'recall': recall_score(y_test, y_pred),
         'f1_score': f1_score(y_test, y_pred)
     }
+
+    # Fairness metrics using Fairlearn (if sensitive attribute exists)
+    sensitive_attr = None
+    # Try common sensitive attribute names
+    for col in ['gender', 'Gender', 'partner_gender', 'Partner Gender']:
+        if col in X_test.columns:
+            sensitive_attr = X_test[col]
+            break
+    if sensitive_attr is not None:
+        mf = MetricFrame(metrics={'accuracy': accuracy_score, 'selection_rate': selection_rate},
+                         y_true=y_test,
+                         y_pred=y_pred,
+                         sensitive_features=sensitive_attr)
+        print("\nFairness metrics by group (Fairlearn):")
+        print(mf.by_group)
+        try:
+            import matplotlib.pyplot as plt
+            mf.by_group.plot(kind="bar", subplots=True)
+            plt.suptitle("Group Fairness Metrics")
+            plt.show()
+        except ImportError:
+            print("matplotlib not installed, skipping plot.")
+    else:
+        print("No sensitive attribute found for group fairness metrics.")
     return evaluation_metrics
 
 def preprocess_user_data(user_df, train_columns):
@@ -132,22 +185,23 @@ def predict():
         return jsonify({'error': 'Model is not trained or loaded. Please check backend logs.'}), 500
 
     try:
-        user_input = request.json
-        user_df = pd.DataFrame([user_input])
 
+        user_input = request.json
+        # Input validation
+        valid, error_msg = validate_input(user_input)
+        if not valid:
+            return jsonify({'error': error_msg}), 400
+
+        user_df = pd.DataFrame([user_input])
         # Preprocess the user's data to match the training data format
         user_features_processed = preprocess_user_data(user_df.copy(), train_features_columns)
-        
         # Make the prediction
         prediction = model.predict(user_features_processed)
         result = "eligible" if prediction[0] == 1 else "not eligible"
-
         # Add prediction to the original DataFrame for logging
         user_df['Creditworthy_Prediction'] = result
-        
         # Save the original user input plus prediction to the CSV file
         save_to_csv(user_df)
-
         # Return the prediction and evaluation metrics
         return jsonify({
             'prediction': result,
@@ -178,25 +232,59 @@ def predict_csv():
             # Read the CSV file from the request
             csv_data = StringIO(file.read().decode('utf-8'))
             input_df = pd.read_csv(csv_data)
+            # Input validation for all rows
+            valid, error_msg = validate_input(input_df)
+            if not valid:
+                return jsonify({'error': error_msg}), 400
 
             # Preprocess the entire DataFrame
             user_features_processed = preprocess_user_data(input_df.copy(), train_features_columns)
-            
             # Make the predictions
             predictions = model.predict(user_features_processed)
-            
             # Add the predictions to the original DataFrame
             input_df['Creditworthy_Prediction'] = np.where(predictions == 1, 'Eligible', 'Not Eligible')
-
             # Save the entire DataFrame to the CSV file
             save_to_csv(input_df)
 
+            # --- Fairness & Bias Reporting ---
+            from fairlearn.metrics import MetricFrame, selection_rate, true_positive_rate
+            sensitive_col = 'Partner Type'
+            fairness_metrics = {}
+            fairness_observation = None
+            if sensitive_col in input_df.columns:
+                y_true = input_df['Creditworthy']
+                y_pred = (input_df['Creditworthy_Prediction'] == 'Eligible').astype(int)
+                sensitive_features = input_df[sensitive_col]
+                # Demographic Parity (selection_rate) and Equal Opportunity (true_positive_rate)
+                mf = MetricFrame(
+                    metrics={
+                        'selection_rate': selection_rate,
+                        'equal_opportunity': true_positive_rate
+                    },
+                    y_true=y_true,
+                    y_pred=y_pred,
+                    sensitive_features=sensitive_features
+                )
+                fairness_metrics = {
+                    'selection_rate': mf.by_group['selection_rate'].to_dict(),
+                    'equal_opportunity': mf.by_group['equal_opportunity'].to_dict()
+                }
+                 # Observations
+                rates = mf.by_group['selection_rate']
+                max_group = rates.idxmax()
+                min_group = rates.idxmin()
+                diff = rates[max_group] - rates[min_group]
+                fairness_observation = f"{max_group} group approval rate is {diff:.2%} higher than {min_group} group."
+                if abs(diff) > 0.1:
+                    fairness_observation += " Mitigation recommended: Consider reweighting or post-processing."
+
             # Convert DataFrame to a list of dictionaries for JSON response
             results = input_df.to_dict('records')
-            
             return jsonify({
                 'predictions': results,
-                'metrics': evaluation_metrics
+                'metrics': evaluation_metrics,
+                'fairness_metrics': fairness_metrics,
+                'fairness_observation': fairness_observation
             })
         except Exception as e:
             return jsonify({'error': f"Error processing file: {str(e)}"}), 500
