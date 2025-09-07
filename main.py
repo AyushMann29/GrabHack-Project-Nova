@@ -158,9 +158,13 @@ def preprocess_user_data(user_df, train_columns):
 def save_to_csv(data_df, filename='online_testcases.csv'):
     """
     Saves a DataFrame to a CSV file.
-    If the file exists, it appends without writing the header.
-    If the file does not exist, it creates a new file with a header.
+    Removes any empty columns (like 'Creditworthy') before saving.
     """
+    # Drop 'Creditworthy' if it exists and is empty or all NaN
+    if 'Creditworthy' in data_df.columns and data_df['Creditworthy'].isnull().all():
+        data_df = data_df.drop(columns=['Creditworthy'])
+    # Drop any other columns that are all NaN
+    data_df = data_df.dropna(axis=1, how='all')
     file_exists = os.path.isfile(filename)
     data_df.to_csv(filename, mode='a', header=not file_exists, index=False)
     print(f"Data successfully saved to {filename}")
@@ -189,7 +193,7 @@ def predict():
         user_features_processed = preprocess_user_data(user_df.copy(), train_features_columns)
         # Make the prediction
         prediction = model.predict(user_features_processed)
-        result = "eligible" if prediction[0] == 1 else "not eligible"
+        result = "Eligible" if prediction[0] == 1 else "Not Eligible"
         # Add prediction to the original DataFrame for logging
         user_df['Creditworthy_Prediction'] = result
         # Save the original user input plus prediction to the CSV file
@@ -224,56 +228,73 @@ def predict_csv():
             # Read the CSV file from the request
             csv_data = StringIO(file.read().decode('utf-8'))
             input_df = pd.read_csv(csv_data)
+
+            # Check if ground truth is present
+            has_ground_truth = 'Creditworthy' in input_df.columns
+
+            # Remove 'Creditworthy' column from features for prediction
+            if has_ground_truth:
+                y_true = input_df['Creditworthy']
+                input_df_features = input_df.drop(columns=['Creditworthy'])
+            else:
+                input_df_features = input_df
+
+            # Remove any other empty columns
+            input_df_features = input_df_features.dropna(axis=1, how='all')
+
             # Input validation for all rows
-            valid, error_msg = validate_input(input_df)
+            valid, error_msg = validate_input(input_df_features)
             if not valid:
                 return jsonify({'error': error_msg}), 400
 
             # Preprocess the entire DataFrame
-            user_features_processed = preprocess_user_data(input_df.copy(), train_features_columns)
+            user_features_processed = preprocess_user_data(input_df_features.copy(), train_features_columns)
             # Make the predictions
             predictions = model.predict(user_features_processed)
             # Add the predictions to the original DataFrame
             input_df['Creditworthy_Prediction'] = np.where(predictions == 1, 'Eligible', 'Not Eligible')
+
+            # Remove any empty columns again before saving/returning
+            input_df = input_df.dropna(axis=1, how='all')
+
             # Save the entire DataFrame to the CSV file
             save_to_csv(input_df)
 
             # --- Fairness & Bias Reporting ---
-            sensitive_col = 'Partner Type'
             fairness_metrics = {}
-            fairness_observation = None
-            if sensitive_col in input_df.columns:
-                # Need to handle potential one-hot encoding if it was present
-                y_true = input_df['Creditworthy']
-                y_pred = (input_df['Creditworthy_Prediction'] == 'Eligible').astype(int)
-                sensitive_features = input_df[sensitive_col]
-
-                # Demographic Parity (selection_rate) and Equal Opportunity (true_positive_rate)
-                mf = MetricFrame(
-                    metrics={
-                        'selection_rate': selection_rate,
-                        'equal_opportunity': true_positive_rate
-                    },
-                    y_true=y_true,
-                    y_pred=y_pred,
-                    sensitive_features=sensitive_features
-                )
-                fairness_metrics = {
-                    'selection_rate': mf.by_group['selection_rate'].to_dict(),
-                    'equal_opportunity': mf.by_group['equal_opportunity'].to_dict()
-                }
-
-                # Observations
-                rates = mf.by_group['selection_rate']
-                if not rates.empty:
+            fairness_observation = "Fairness metrics require ground truth labels and are not available for this upload."
+            if has_ground_truth:
+                # Only compute fairness if ground truth is present
+                sensitive_col = 'Partner Type'
+                if sensitive_col in input_df.columns:
+                    y_pred = (input_df['Creditworthy_Prediction'] == 'Eligible').astype(int)
+                    # If Creditworthy is string, convert to binary
+                    if y_true.dtype == object:
+                        y_true_bin = y_true.map(lambda x: 1 if str(x).lower() in ['eligible', '1', 'true', 'yes'] else 0)
+                    else:
+                        y_true_bin = y_true
+                    sensitive_features = input_df[sensitive_col]
+                    mf = MetricFrame(
+                        metrics={
+                            'selection_rate': selection_rate,
+                            'equal_opportunity': true_positive_rate
+                        },
+                        y_true=y_true_bin,
+                        y_pred=y_pred,
+                        sensitive_features=sensitive_features
+                    )
+                    fairness_metrics = {
+                        'selection_rate': mf.by_group['selection_rate'].to_dict(),
+                        'equal_opportunity': mf.by_group['equal_opportunity'].to_dict()
+                    }
+                    # Observations
+                    rates = mf.by_group['selection_rate']
                     max_group = rates.idxmax()
                     min_group = rates.idxmin()
                     diff = rates[max_group] - rates[min_group]
                     fairness_observation = f"{max_group} group approval rate is {diff:.2%} higher than {min_group} group."
                     if abs(diff) > 0.1:
                         fairness_observation += " Mitigation recommended: Consider reweighting or post-processing."
-                    else:
-                        fairness_observation += " The model appears to be fair with respect to this metric."
 
             # Convert DataFrame to a list of dictionaries for JSON response
             results = input_df.to_dict('records')
@@ -284,6 +305,8 @@ def predict_csv():
                 'fairness_observation': fairness_observation
             })
         except Exception as e:
+            import traceback
+            print(traceback.format_exc())
             return jsonify({'error': f"Error processing file: {str(e)}"}), 500
 
     return jsonify({'error': 'An unknown error occurred.'}), 500
