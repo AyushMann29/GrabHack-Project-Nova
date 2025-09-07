@@ -11,6 +11,15 @@ Model Performance Metrics: Displays key metrics (Accuracy, Precision, Recall, F1
 
 Data Logging: All submitted data is logged to an online_testcases.csv file, which can be used to retrain and improve the model over time.
 
+## Demo
+<img width="1919" height="995" alt="image" src="https://github.com/user-attachments/assets/9d71a554-3d22-46ac-ad6d-5d3394f7cf98" />
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/5b2f943d-c673-491f-8899-a7aef9b981af" />
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/fc3a6177-22f8-41ee-bf50-157fea60d166" />
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/4662683b-cb48-4e42-8e53-cd0214537613" />
+<img width="830" height="818" alt="image" src="https://github.com/user-attachments/assets/4d5864a6-4125-4e61-86df-eb4d41533507" />
+<img width="1919" height="993" alt="image" src="https://github.com/user-attachments/assets/33f0d466-db55-4c11-a1b9-64e5fb1d5ba5" />
+
+
 ## Technologies Used
 
 Frontend: HTML, JavaScript, and Tailwind CSS
