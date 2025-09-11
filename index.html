@@ -294,7 +294,7 @@
                 // Call the new function to convert values to numbers
                 const processedData = convertToNumbers(data);
 
-                const backendEndpoint = 'http://localhost:5000/predict';
+                const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict';
                 // Prepare UI
                 predictionResult.classList.remove('hidden');
                 predictionResult.textContent = 'Checking eligibility...';
@@ -355,7 +355,7 @@
                 const formData = new FormData();
                 formData.append('file', csvFile);
 
-                const backendEndpoint = 'http://localhost:5000/predict_csv'; 
+                const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict_csv'; 
                 try {
                     const response = await fetch(backendEndpoint, {
                         method: 'POST',
