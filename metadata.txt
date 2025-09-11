@@ -1,0 +1,44 @@
+{
+  "task": {
+    "type": "tabular-classification",
+    "name": "Creditworthiness Prediction"
+  },
+  "metrics": [
+    {
+      "name": "Accuracy",
+      "type": "accuracy_score",
+      "value": "<value from evaluate_model>",
+      "note": "The proportion of correctly classified instances."
+    },
+    {
+      "name": "Precision",
+      "type": "precision_score",
+      "value": "<value from evaluate_model>",
+      "note": "The proportion of positive identifications that were actually correct."
+    },
+    {
+      "name": "Recall",
+      "type": "recall_score",
+      "value": "<value from evaluate_model>",
+      "note": "The proportion of actual positive cases that were identified correctly."
+    },
+    {
+      "name": "F1 Score",
+      "type": "f1_score",
+      "value": "<value from evaluate_model>",
+      "note": "The harmonic mean of Precision and Recall."
+    },
+    {
+      "name": "Selection Rate",
+      "type": "selection_rate",
+      "value": "<fairlearn value>",
+      "note": "The proportion of predictions that are positive, for each group."
+    },
+    {
+      "name": "Equal Opportunity",
+      "type": "true_positive_rate",
+      "value": "<fairlearn value>",
+      "note": "The proportion of actual positive outcomes that are correctly identified for each group."
+    }
+  ]
+}
