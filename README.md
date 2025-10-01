@@ -1,6 +1,8 @@
-# Nova: AI-Powered Loan Eligibility Platform
+
 
 <div align="center">
+
+<h1>Nova: AI-Powered Loan Eligibility Platform</h1>
 
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com)
@@ -8,8 +10,6 @@
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 
 **An intelligent creditworthiness assessment system for Grab's merchant and driver partners**
-
-[🎯 Features](#-features) • [🚀 Quick Start](#-quick-start) • [📊 Demo](#-demo) • [🏗️ Architecture](#️-architecture) • [📖 API Documentation](#-api-documentation)
 
 </div>
 
@@ -221,34 +221,28 @@ python main.py
 
 ```
 GrabHack-Project-Nova/
-├── Frontend
-│   └── index.html                      # Main web interface
-├── Backend APIs
-│   ├── main.py                         # Primary Flask application
-│   ├── app.py                          # Lightweight pre-trained model server
-│   ├── main-ask.py                     # Interactive single prediction
-│   └── main-many.py                    # Batch processing script
-├── ML Pipeline
-│   ├── train_and_export_model.py       # Model training and export
-│   ├── dataset.py                      # Synthetic data generation
-│   └── model.pkl                       # Trained model (generated)
-├── Data Assets
-│   ├── catalyst_train.csv              # Training dataset (10K+ records)
-│   ├── catalyst_test.csv               # Test dataset
-│   ├── user_input.csv                  # Single prediction sample
-│   ├── user_input_many.csv             # Bulk prediction sample
-│   └── online_testcases.csv            # Audit log (generated)
-├── Model Artifacts
-│   ├── xgboost_credit_model.joblib     # Serialized XGBoost model
-│   ├── train_features_columns.joblib   # Feature schema
-│   └── evaluation_metrics.joblib       # Performance metrics
-├── Configuration
-│   ├── requirements.txt                # Python dependencies
-│   ├── metadata.txt                    # Model metadata
-│   └── README.md                       # This file
-└── Documentation
-    ├── CODE_OF_CONDUCT.md              # Community guidelines
-    └── Contribute.md                   # Contribution guide
+├── app.py                              # Lightweight pre-trained model server
+├── catalyst_test.csv                   # Test dataset
+├── catalyst_train.csv                  # Training dataset (10,000+ records)
+├── CODE_OF_CONDUCT.md                  # Community standards
+├── Contribute.md                       # Contribution guidelines
+├── dataset.py                          # Synthetic data generation utility
+├── evaluation_metrics.joblib           # Model performance metrics
+├── index.html                          # Main web application interface
+├── main-ask.py                         # Interactive single prediction CLI
+├── main-many.py                        # Batch processing CLI
+├── main.py                             # Primary Flask server with training
+├── metadata.txt                        # Model and task metadata
+├── model.pkl                           # Alternative model format
+├── online_testcases.csv                # Runtime audit log (auto-generated)
+├── README.md                           # Project documentation
+├── requirements.txt                    # Python dependencies list
+├── train_and_export_model.py           # Model training and export script
+├── train_features_columns.joblib       # Feature schema definition
+├── user_input.csv                      # Single prediction sample
+├── user_input_many.csv                 # Bulk prediction sample
+├── xgboost_credit_model.joblib         # Serialized XGBoost classifier
+└── __pycache__/                        # Python bytecode cache
 ```
 
 ## API Documentation
