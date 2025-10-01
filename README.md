@@ -17,17 +17,17 @@
 
 ## Table of Contents
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Demo Screenshots](#-demo)
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Live Application Preview](#live-application-preview)
 - [Technology Stack](#-technology-stack)
-- [Quick Start](#-quick-start)
-- [Project Architecture](#️-architecture)
-- [API Documentation](#-api-documentation)
-- [Data Features](#-data-features)
-- [Model Performance](#-model-performance)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [Quick Start](#quick-start)
+- [Architecture](#architecture)
+- [API Documentation](#api-documentation)
+- [Data Features](#data-features)
+- [Model Performance](#model-performance)
+- [Contributing](#contributing)
+- [Authors & Acknowledgments](#authors--acknowledgments)
 
 ## Overview
 
@@ -223,34 +223,6 @@ python main.py
                         └─────────────────┘
 ```
 
-### File Structure
-
-```
-GrabHack-Project-Nova/
-├── app.py                              # Lightweight pre-trained model server
-├── catalyst_test.csv                   # Test dataset
-├── catalyst_train.csv                  # Training dataset (10,000+ records)
-├── CODE_OF_CONDUCT.md                  # Community standards
-├── Contribute.md                       # Contribution guidelines
-├── dataset.py                          # Synthetic data generation utility
-├── evaluation_metrics.joblib           # Model performance metrics
-├── index.html                          # Main web application interface
-├── main-ask.py                         # Interactive single prediction CLI
-├── main-many.py                        # Batch processing CLI
-├── main.py                             # Primary Flask server with training
-├── metadata.txt                        # Model and task metadata
-├── model.pkl                           # Alternative model format
-├── online_testcases.csv                # Runtime audit log (auto-generated)
-├── README.md                           # Project documentation
-├── requirements.txt                    # Python dependencies list
-├── train_and_export_model.py           # Model training and export script
-├── train_features_columns.joblib       # Feature schema definition
-├── user_input.csv                      # Single prediction sample
-├── user_input_many.csv                 # Bulk prediction sample
-├── xgboost_credit_model.joblib         # Serialized XGBoost classifier
-└── __pycache__/                        # Python bytecode cache
-```
-
 ## API Documentation
 
 ### Base URLs
@@ -259,154 +231,6 @@ GrabHack-Project-Nova/
 |-------------|----------|-------------|
 | **Local Development** | `http://127.0.0.1:5000` | Local Flask development server |
 | **Production** | `https://grabhack-project-nova.onrender.com` | Deployed production instance |
-
----
-
-### Endpoint Reference
-
-#### Individual Loan Assessment
-
-**`POST /predict`**
-
-Evaluates loan eligibility for a single partner using real-time machine learning predictions.
-
-**Endpoint URLs:**
-- Production: `https://grabhack-project-nova.onrender.com/predict`
-- Development: `http://127.0.0.1:5000/predict`
-
-**Request Headers:**
-```http
-Content-Type: application/json
-Accept: application/json
-```
-
-**Request Body Schema:**
-```json
-{
-  "Partner Type": "string",                   
-  "Earnings (Value)": "number",                
-  "Earnings (Stability Type)": "string",    
-  "Perf. Rating (Avg)": "number",             
-  "Time on Platform (Months)": "number",      
-  "Order/Trip Volume": "number",              
-  "Financial Activity (Score)": "number",     
-  "Earnings Volatility": "number",           
-  "On-Time Loan Repayments": "number",       
-  "Operational Anomaly Score": "number"      
-}
-```
-
-**Example Request:**
-```json
-{
-  "Partner Type": "Merchant",
-  "Earnings (Value)": 2500,
-  "Earnings (Stability Type)": "Stable",
-  "Perf. Rating (Avg)": 4.5,
-  "Time on Platform (Months)": 24,
-  "Order/Trip Volume": 450,
-  "Financial Activity (Score)": 0.75,
-  "Earnings Volatility": 0.15,
-  "On-Time Loan Repayments": 12,
-  "Operational Anomaly Score": 0.08
-}
-```
-
-**Success Response (200 OK):**
-```json
-{
-  "prediction": "Eligible",                 
-  "metrics": {
-    "accuracy": 0.9890,                    
-    "precision": 0.9892,                     
-    "recall": 0.9892,                      
-    "f1_score": 0.9892                       
-  }
-}
-```
-
-**Error Response (400 Bad Request):**
-```json
-{
-  "error": "Invalid earnings: 150000. Must be between 0 and 100000."
-}
-```
-
----
-
-#### Bulk Loan Assessment
-
-**`POST /predict_csv`**
-
-Processes multiple loan applications simultaneously via CSV file upload with comprehensive fairness analysis.
-
-**Endpoint URLs:**
-- Production: `https://grabhack-project-nova.onrender.com/predict_csv`
-- Development: `http://127.0.0.1:5000/predict_csv`
-
-**Request Headers:**
-```http
-Content-Type: multipart/form-data
-Accept: application/json
-```
-
-**Request Body:**
-```
-Form Data:
-- file: CSV file containing partner data (max 10MB recommended)
-```
-
-**CSV File Format:**
-The uploaded CSV must contain the following columns with exact header names:
-```csv
-Partner ID,Partner Type,Earnings (Value),Earnings (Stability Type),Perf. Rating (Avg),Time on Platform (Months),Order/Trip Volume,Financial Activity (Score),Earnings Volatility,On-Time Loan Repayments,Operational Anomaly Score
-```
-
-**Success Response (200 OK):**
-```json
-{
-  "predictions": [
-    {
-      "Partner ID": "00001",
-      "Partner Type": "Driver",
-      "Earnings (Value)": 1800,
-      "Earnings (Stability Type)": "Stable",
-      "Perf. Rating (Avg)": 4.5,
-      "Time on Platform (Months)": 27,
-      "Order/Trip Volume": 447,
-      "Financial Activity (Score)": 0.6,
-      "Earnings Volatility": 0.1,
-      "On-Time Loan Repayments": 12,
-      "Operational Anomaly Score": 0.03,
-      "Creditworthy_Prediction": "Eligible"
-    }
-  ],
-  "metrics": {
-    "accuracy": 0.9890,
-    "precision": 0.9892,
-    "recall": 0.9892,
-    "f1_score": 0.9892
-  },
-  "fairness_metrics": {
-    "selection_rate": {
-      "Driver": 0.72,
-      "Merchant": 0.68
-    },
-    "equal_opportunity": {
-      "Driver": 0.94,
-      "Merchant": 0.91
-    }
-  },
-  "fairness_observation": "Driver group approval rate is 4.00% higher than Merchant group."
-}
-```
-
-**Error Response (400 Bad Request):**
-```json
-{
-  "error": "No file part in the request"
-}
-```
 
 ---
 
@@ -481,9 +305,13 @@ We welcome contributions! Please see our [Contributing Guide](Contribute.md) and
 6. Open a Pull Request
 
 
-## Authors & Acknowledgments
+## Contributors
 
-- **AyushMann29** - *Project Lead & Development* - [GitHub](https://github.com/AyushMann29)
+Thanks to all our amazing contributors for their support and code!
+
+<a href="https://github.com/AyushMann29/GrabHack-Project-Nova/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=AyushMann29/GrabHack-Project-Nova" />
+</a>
 
 <div align="center">
 
