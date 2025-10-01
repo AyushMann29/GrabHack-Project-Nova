@@ -63,7 +63,6 @@ Open the frontend in your web browser by navigating to the index.html file locat
 
 Project Structure
 
-
 ├── catalyst_train.csv          
 ├── online_testcases.csv        
 ├── main.py     
@@ -73,3 +72,15 @@ Project Structure
 Author
 
 Ayush Mann - Initial work - https://github.com/AyushMann29/GrabHack-Project-Nova
+
+## Badges
+
+[![GitHub stars](https://img.shields.io/github/stars/AyushMann29/GrabHack-Project-Nova?style=social)](https://github.com/AyushMann29/GrabHack-Project-Nova/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/AyushMann29/GrabHack-Project-Nova?style=social)](https://github.com/AyushMann29/GrabHack-Project-Nova/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/AyushMann29/GrabHack-Project-Nova)](https://github.com/AyushMann29/GrabHack-Project-Nova/issues)
+[![License](https://img.shields.io/github/license/AyushMann29/GrabHack-Project-Nova)](https://github.com/AyushMann29/GrabHack-Project-Nova/blob/main/LICENSE)
+
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
