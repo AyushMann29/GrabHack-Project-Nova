@@ -7,7 +7,11 @@
 [![Python](https://img.shields.io/badge/Python-3.8+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-2.0+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com)
 [![XGBoost](https://img.shields.io/badge/XGBoost-ML-FF6B35?style=for-the-badge)](https://xgboost.readthedocs.io)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
+
+
+[![GitHub stars](https://img.shields.io/github/stars/AyushMann29/GrabHack-Project-Nova?style=social)](https://github.com/AyushMann29/GrabHack-Project-Nova/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/AyushMann29/GrabHack-Project-Nova?style=social)](https://github.com/AyushMann29/GrabHack-Project-Nova/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/AyushMann29/GrabHack-Project-Nova)](https://github.com/AyushMann29/GrabHack-Project-Nova/issues)
 
 **An intelligent creditworthiness assessment system for Grab's merchant and driver partners**
 
