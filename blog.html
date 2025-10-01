@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Nova - A Door to Opportunity</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.9), rgba(165, 55, 253, 0.9));
+        }
+        .icon-glow {
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Header Section -->
+    <header class="relative text-white overflow-hidden">
+        <div class="absolute inset-0">
+            <img src="https://placehold.co/1920x1080/1a202c/ffffff?text=." alt="Abstract background" class="w-full h-full object-cover">
+            <div class="absolute inset-0 hero-gradient opacity-90"></div>
+        </div>
+        <div class="relative max-w-4xl mx-auto py-20 px-6 sm:px-8 lg:px-12 text-center">
+            <div class="mb-4">
+                <svg class="w-20 h-20 mx-auto icon-glow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-shadow-lg">Nova</h1>
+            <p class="text-xl md:text-2xl font-medium text-slate-200">More Than Code, It's a Door to Opportunity</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto p-6 sm:p-8 lg:p-12">
+        
+        <!-- Introduction Section -->
+        <article class="prose prose-lg max-w-none text-slate-700 space-y-8">
+            <p class="text-xl leading-8">
+                We've all felt that knot in our stomach. The one that comes from waiting. Waiting for a test result, waiting for a job offer, or waiting for a decision that could change our future. For millions of small business owners and independent workers, that feeling is a constant companion when they apply for a loan.
+            </p>
+
+            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <p>
+                    Imagine Ravi, a ride-share driver in a bustling city. He works ten hours a day, his income is steady, but it doesn't fit into the neat little box of a monthly paycheck. He dreams of owning his own, more fuel-efficient car, which would mean more money in his pocket for his family. But every time he approaches a traditional lender, he hits a wall.
+                </p>
+                <p class="mt-4">
+                    Now, imagine Maria, who runs a small bakery from her home. Her cupcakes are the talk of the town, and orders are pouring in. She knows she could grow her business if she could just afford a larger, industrial oven. But the bank sees her small, cash-based operation and hesitates.
+                </p>
+                <p class="mt-4 font-semibold text-indigo-600">
+                    The stories of Ravi and Maria are the stories of millions. They are the stories of ambition and hard work being held back by an outdated system. This is the problem we set out to solve with Nova.
+                </p>
+            </div>
+
+            <!-- What is Nova? Section -->
+            <div class="pt-8">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">What is Nova, Really? A Financial Co-Pilot</h2>
+                <p class="mt-4">
+                    Think of Nova not as a cold, calculating algorithm, but as a fair and incredibly fast co-pilot for financial decisions. It’s designed to look at the whole person, not just a few numbers on a page. It helps lenders see the potential that a traditional credit score might miss.
+                </p>
+                <p class="mt-4">
+                    For people like Ravi, Nova understands the gig economy. It sees the consistency in his daily earnings and his high customer ratings as signs of reliability. For Maria, it recognizes the pattern of her growing sales and the loyalty of her customers. Nova processes this information in moments, replacing long, anxious waits with speed, clarity, and fairness.
+                </p>
+            </div>
+            
+            <!-- New Section: Powerfully Simple -->
+            <div class="pt-8">
+                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                    <h3 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
+                        <svg class="w-6 h-6 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Powerfully Simple: The Magic of a CSV File
+                    </h3>
+                    <p class="mt-4">
+                        What if you need to check hundreds of applicants at once? Nova handles this with something everyone knows: a spreadsheet. You can upload a simple CSV file with all your applicants' data, and Nova gets to work, analyzing each one and giving you a complete report in seconds.
+                    </p>
+                    <div class="mt-4 bg-slate-100 p-4 rounded-lg border border-slate-200 text-sm">
+                        <p><strong class="font-semibold text-slate-800">Under the Hood:</strong> Behind this simplicity is a robust <code class="text-indigo-600 font-mono font-medium">Flask API</code> that processes the file, feeding each entry into our trained <code class="text-indigo-600 font-mono font-medium">XGBoost</code> machine learning model for an instant, fair assessment. It’s enterprise-level power with spreadsheet-level ease.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-8 rounded-xl overflow-hidden shadow-lg">
+                <img src="https://placehold.co/1200x600/6366f1/ffffff?text=Empowering+Entrepreneurs" alt="A diverse group of empowered small business owners" class="w-full h-full object-cover">
+            </div>
+
+            <!-- Foundation of Trust Section -->
+            <div class="pt-8">
+                <h2 class="text-3xl font-bold tracking-tight text-slate-900">Building a Foundation of Trust: The Fair AI at its Heart</h2>
+                <p class="mt-4">
+                    It's natural to be skeptical. How can we trust a machine to make such a life-changing decision? What if it's biased? This was our biggest priority. We know that technology, if not built carefully, can inherit the same biases that exist in our world. It's like a student learning from an old, outdated textbook – they will repeat the same mistakes.
+                </p>
+                 <div class="mt-6 bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 p-4 rounded-r-lg">
+                    <p class="font-bold">A Promise of Fairness</p>
+                    <p class="mt-2">
+                        That's why we built Nova with a "fairness filter" at its core. This system constantly checks Nova's work, asking tough questions: Is it treating applicants of all backgrounds equally? Is it giving everyone a genuine opportunity based on their individual merit? This isn't just a feature; it's a promise. A promise that Nova is built to uplift, not to discriminate.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- The Bigger Picture Section -->
+            <div class="pt-8">
+                 <h2 class="text-3xl font-bold tracking-tight text-slate-900">The Bigger Picture: A Future Empowered by You</h2>
+                 <p class="mt-4">
+                    Nova is more than just a project. It’s a belief. A belief that financial opportunity shouldn't be a privilege reserved for a few, but a possibility accessible to anyone with a good idea and the drive to make it happen.
+                 </p>
+                 <p class="mt-4">
+                    For Ravi, it means the keys to a new car and more time with his family. For Maria, it's the smell of dozens more cupcakes baking in a new oven, and perhaps, the chance to hire her first employee.
+                 </p>
+                 <p class="mt-6 text-xl font-medium text-slate-900">
+                    This is the future we're building—one where technology doesn't create walls, but opens doors. A future where human potential is the most valuable currency, and smart, fair technology like Nova is there to help everyone invest in their dreams.
+                </p>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-300 mt-12">
+        <div class="max-w-4xl mx-auto py-8 px-6 sm:px-8 lg:px-12 text-center">
+            <div class="mb-8">
+                <h3 class="text-xl font-bold text-white mb-4">Explore the Project</h3>
+                <div class="flex justify-center items-center space-x-4">
+                    <a href="https://github.com/AyushMann29/GrabHack-Project-Nova" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-slate-700 hover:bg-indigo-600 text-white font-semibold py-2 px-5 rounded-lg transition-colors duration-300 shadow-md">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.001 10.001 0 0022 12c0-5.523-4.477-10-10-10z" clip-rule="evenodd" /></svg>
+                        GitHub Repo
+                    </a>
+                    <a href="https://grab-hack-project-nova.vercel.app/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center bg-slate-700 hover:bg-emerald-500 text-white font-semibold py-2 px-5 rounded-lg transition-colors duration-300 shadow-md">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        Try Nova
+                    </a>
+                </div>
+            </div>
+            <p>&copy; 2025 Project Nova. A GrabHack Project by Ayush Mann.</p>
+            <p class="text-sm text-slate-400 mt-2">Built to create opportunity and foster financial inclusion.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
+
