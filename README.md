@@ -1,4 +1,4 @@
-# 🚀 Nova: AI-Powered Loan Eligibility Platform
+# Nova: AI-Powered Loan Eligibility Platform
 
 <div align="center">
 
@@ -6,7 +6,6 @@
 [![Flask](https://img.shields.io/badge/Flask-2.0+-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com)
 [![XGBoost](https://img.shields.io/badge/XGBoost-ML-FF6B35?style=for-the-badge)](https://xgboost.readthedocs.io)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 **An intelligent creditworthiness assessment system for Grab's merchant and driver partners**
 
@@ -16,7 +15,7 @@
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#-overview)
 - [Key Features](#-key-features)
@@ -30,7 +29,7 @@
 - [Contributing](#-contributing)
 - [License](#-license)
 
-## 🎯 Overview
+## Overview
 
 **Nova** is an enterprise-grade machine learning platform designed to assess loan eligibility for Grab's ecosystem partners. Built with fairness and transparency in mind, Nova provides real-time creditworthiness predictions while maintaining ethical AI practices through comprehensive bias detection and mitigation.
 
@@ -38,30 +37,30 @@ The platform serves two primary user groups:
 - **Merchants**: Restaurant owners, retail partners, and service providers
 - **Drivers**: Transportation partners across various vehicle categories
 
-## ✨ Key Features
+## Key Features
 
-### 🔮 **Intelligent Prediction Engine**
+### **Intelligent Prediction Engine**
 - **Single Entry Prediction**: Real-time eligibility assessment through intuitive web interface
 - **Bulk CSV Processing**: High-throughput batch processing for enterprise operations
 - **XGBoost ML Model**: State-of-the-art gradient boosting with 95%+ accuracy
 
-### 📊 **Comprehensive Analytics Dashboard**
+### **Comprehensive Analytics Dashboard**
 - **Model Performance Metrics**: Real-time accuracy, precision, recall, and F1-score tracking
 - **Fairness Assessment**: Bias detection across demographic groups using Fairlearn
 - **Interactive Data Visualization**: Rich charts and tables for decision transparency
 
-### 🛡️ **Enterprise-Grade Features**
+### **Enterprise-Grade Features**
 - **Data Validation**: Robust input sanitization and anomaly detection
 - **Audit Trail**: Complete logging of all predictions for compliance
 - **RESTful API**: Production-ready endpoints with CORS support
 - **Responsive Design**: Mobile-first UI with Tailwind CSS
 
-### 🔍 **Fairness & Bias Mitigation**
+### **Fairness & Bias Mitigation**
 - **Algorithmic Fairness**: Equal opportunity and selection rate monitoring
 - **Group Parity Analysis**: Performance comparison across partner types
 - **Bias Reporting**: Automated fairness violation detection and recommendations
 
-## 📊 Demo
+## Demo
 
 <div align="center">
 
@@ -101,11 +100,12 @@ The platform serves two primary user groups:
 - **Design**: Responsive, mobile-first architecture
 
 ### **Infrastructure**
-- **Deployment**: Render.com (Production), Local development
+- **Deployment**: Render.com (Production: `https://grabhack-project-nova.onrender.com`), Local development
 - **Data Storage**: CSV-based with audit logging
 - **API**: RESTful design with JSON responses
+- **CORS**: Enabled for cross-origin requests
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -140,8 +140,8 @@ pip install -r requirements.txt
 python main.py
 ```
 - Trains model automatically on startup
-- Starts Flask server on `http://localhost:5000`
-- Open `index.html` in your browser
+- Starts Flask server on `http://127.0.0.1:5000`
+- Open `index.html` in your browser (or serve on port 5500+ via Live Server)
 
 #### Option 2: Pre-trained Model Server
 ```bash
@@ -163,14 +163,36 @@ python main-many.py
 
 ### Usage
 
-1. **Open the web interface** by navigating to `index.html`
-2. **Choose prediction mode**:
+1. **Start the backend server**: Run `python main.py` (starts on `http://127.0.0.1:5000`)
+2. **Open the web interface**: 
+   - **Option A**: Double-click `index.html` to open in browser
+   - **Option B**: Use Live Server extension in VS Code (typically serves on `http://127.0.0.1:5500`)
+3. **Choose prediction mode**:
    - **Single Entry**: Fill the form with partner details
    - **Upload CSV**: Use sample files like `user_input_many.csv`
-3. **View results** with model confidence and fairness metrics
-4. **Monitor performance** through the integrated dashboard
+4. **View results** with model confidence and fairness metrics
 
-## 🏗️ Architecture
+### Troubleshooting
+
+#### **Port Configuration & Common Issues**
+
+**Understanding the Setup:**
+- **Backend API**: Runs on `http://127.0.0.1:5000` (Flask server with `/predict` and `/predict_csv` endpoints)
+- **Frontend**: Serves on different port (e.g., `http://127.0.0.1:5500` via Live Server)
+- **Communication**: Frontend makes API calls to backend on port 5000
+
+**Recommended Development Setup:**
+```bash
+# Terminal 1: Start the backend
+python main.py
+# Should show: "Running on http://127.0.0.1:5000"
+
+# Terminal 2 or VS Code: Serve the frontend
+# Use Live Server extension or open index.html directly
+# Frontend typically runs on http://127.0.0.1:5500
+```
+
+## Architecture
 
 ### System Components
 
@@ -186,55 +208,61 @@ python main-many.py
          │                       │                       │
          └───────────────────────┼───────────────────────┘
                                  │
-                    ┌─────────────────┐
-                    │   Data Layer    │
-                    │                 │
-                    │ • Training CSV  │
-                    │ • Audit Logs    │
-                    │ • Model Assets  │
-                    └─────────────────┘
+                        ┌─────────────────┐
+                        │   Data Layer    │
+                        │                 │
+                        │ • Training CSV  │
+                        │ • Audit Logs    │
+                        │ • Model Assets  │
+                        └─────────────────┘
 ```
 
 ### File Structure
 
 ```
 GrabHack-Project-Nova/
-├── 📱 Frontend
+├── Frontend
 │   └── index.html                      # Main web interface
-├── 🔧 Backend APIs
+├── Backend APIs
 │   ├── main.py                         # Primary Flask application
 │   ├── app.py                          # Lightweight pre-trained model server
 │   ├── main-ask.py                     # Interactive single prediction
 │   └── main-many.py                    # Batch processing script
-├── 🤖 ML Pipeline
+├── ML Pipeline
 │   ├── train_and_export_model.py       # Model training and export
 │   ├── dataset.py                      # Synthetic data generation
 │   └── model.pkl                       # Trained model (generated)
-├── 📊 Data Assets
+├── Data Assets
 │   ├── catalyst_train.csv              # Training dataset (10K+ records)
 │   ├── catalyst_test.csv               # Test dataset
 │   ├── user_input.csv                  # Single prediction sample
 │   ├── user_input_many.csv             # Bulk prediction sample
 │   └── online_testcases.csv            # Audit log (generated)
-├── 🔧 Model Artifacts
+├── Model Artifacts
 │   ├── xgboost_credit_model.joblib     # Serialized XGBoost model
 │   ├── train_features_columns.joblib   # Feature schema
 │   └── evaluation_metrics.joblib       # Performance metrics
-├── 📋 Configuration
+├── Configuration
 │   ├── requirements.txt                # Python dependencies
 │   ├── metadata.txt                    # Model metadata
 │   └── README.md                       # This file
-└── 📖 Documentation
+└── Documentation
     ├── CODE_OF_CONDUCT.md              # Community guidelines
     └── Contribute.md                   # Contribution guide
 ```
 
-## 📖 API Documentation
+## API Documentation
 
-### 🔗 Endpoints
+### Endpoints
+
+> - For **local development**: `http://127.0.0.1:5000`
+> - For **production**: `https://grabhack-project-nova.onrender.com`
 
 #### `POST /predict`
 **Single partner eligibility prediction**
+
+**Production URL**: `https://grabhack-project-nova.onrender.com/predict`
+**Local URL**: `http://127.0.0.1:5000/predict`
 
 **Request Body:**
 ```json
@@ -257,16 +285,19 @@ GrabHack-Project-Nova/
 {
   "prediction": "Eligible",
   "metrics": {
-    "accuracy": 0.9523,
-    "precision": 0.9456,
-    "recall": 0.9398,
-    "f1_score": 0.9427
+    "accuracy": 0.9890,
+    "precision": 0.9892,
+    "recall": 0.9892,
+    "f1_score": 0.9892
   }
 }
 ```
 
 #### `POST /predict_csv`
 **Bulk prediction from CSV upload**
+
+**Production URL**: `https://grabhack-project-nova.onrender.com/predict_csv`
+**Local URL**: `http://127.0.0.1:5000/predict_csv`
 
 **Request:** Multipart form data with CSV file
 
@@ -275,31 +306,51 @@ GrabHack-Project-Nova/
 {
   "predictions": [
     {
+      "Partner ID": "00001",
       "Partner Type": "Driver",
       "Earnings (Value)": 1800,
+      "Earnings (Stability Type)": "Stable",
+      "Perf. Rating (Avg)": 4.5,
+      "Time on Platform (Months)": 27,
+      "Order/Trip Volume": 447,
+      "Financial Activity (Score)": 0.6,
+      "Earnings Volatility": 0.1,
+      "On-Time Loan Repayments": 12,
+      "Operational Anomaly Score": 0.03,
       "Creditworthy_Prediction": "Eligible"
     }
   ],
-  "metrics": { /* Model performance metrics */ },
+  "metrics": {
+    "accuracy": 0.9890,
+    "precision": 0.9892,
+    "recall": 0.9892,
+    "f1_score": 0.9892
+  },
   "fairness_metrics": {
     "selection_rate": {
       "Driver": 0.72,
       "Merchant": 0.68
+    },
+    "equal_opportunity": {
+      "Driver": 0.94,
+      "Merchant": 0.91
     }
   },
-  "fairness_observation": "Driver group approval rate is 4% higher than Merchant group."
+  "fairness_observation": "Driver group approval rate is 4.00% higher than Merchant group."
 }
 ```
 
-### 🔒 Input Validation
+### Input Validation
 
 The API includes comprehensive validation:
-- **Range Checks**: Earnings (0-100,000), Trips (0-1,000)
+- **Range Checks**: Earnings (0-100,000), Number of Trips (0-1,000)
 - **Type Validation**: Categorical values from predefined sets
 - **Data Sanitization**: SQL injection and XSS prevention
 - **Schema Validation**: Required fields and data types
+- **Business Rules**: Partner type validation, performance rating bounds (1.0-5.0)
+- **Score Validation**: Financial Activity Score and Volatility (0.0-1.0)
 
-## 📊 Data Features
+## Data Features
 
 ### Input Schema
 
@@ -320,16 +371,16 @@ The API includes comprehensive validation:
 
 - **`Creditworthy`**: Binary classification (`0` = Not Eligible, `1` = Eligible)
 
-## 📈 Model Performance
+## Model Performance
 
 ### Current Metrics (Training Set Performance)
 
 | Metric | Score | Description |
 |--------|-------|-------------|
-| **Accuracy** | 95.2% | Overall correct predictions |
-| **Precision** | 94.6% | True positives / All positive predictions |
-| **Recall** | 93.9% | True positives / All actual positives |
-| **F1-Score** | 94.3% | Harmonic mean of precision and recall |
+| **Accuracy** | 98.9% | Overall correct predictions |
+| **Precision** | 98.9% | True positives / All positive predictions |
+| **Recall** | 98.9% | True positives / All actual positives |
+| **F1-Score** | 98.9% | Harmonic mean of precision and recall |
 
 ### Fairness Metrics
 
