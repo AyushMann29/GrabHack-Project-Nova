@@ -60,7 +60,7 @@ def predict_csv():
         if file.filename == '':
             return jsonify({'error': 'No selected file'}), 400
         csv_data = StringIO(file.read().decode('utf-8'))
-        input_df = pd.read_csv(csv_data)
+        input_df = pd.read_csv(csv_data, low_memory=False, engine='c')
         # Remove Creditworthy if present
         if 'Creditworthy' in input_df.columns:
             input_df = input_df.drop(columns=['Creditworthy'])
