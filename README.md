@@ -60,31 +60,55 @@ The platform serves two primary user groups:
 - **Group Parity Analysis**: Performance comparison across partner types
 - **Bias Reporting**: Automated fairness violation detection and recommendations
 
-## Demo
+## Live Application Preview
 
 <div align="center">
 
-### Main Dashboard
-<img width="1919" alt="Nova Dashboard" src="https://github.com/user-attachments/assets/9d71a554-3d22-46ac-ad6d-5d3394f7cf98" />
+### **Interactive Dashboard**
+*Clean, intuitive interface designed for financial professionals*
 
-### Single Entry Prediction
-<img width="1919" alt="Single Entry Form" src="https://github.com/user-attachments/assets/5b2f943d-c673-491f-8899-a7aef9b981af" />
+<img width="1919" alt="Nova's main dashboard featuring modern UI with model performance metrics and navigation" src="https://github.com/user-attachments/assets/9d71a554-3d22-46ac-ad6d-5d3394f7cf98" />
 
-### Bulk CSV Processing
-<img width="1919" alt="CSV Upload Interface" src="https://github.com/user-attachments/assets/fc3a6177-22f8-41ee-bf50-157fea60d166" />
+<br>
 
-### Performance Metrics
-<img width="1919" alt="Model Metrics Dashboard" src="https://github.com/user-attachments/assets/4662683b-cb48-4e42-8e53-cd0214537613" />
+### **Single Partner Assessment** 
+*Individual loan eligibility evaluation with instant results*
 
-### Fairness Analysis
-<img width="830" alt="Fairness Metrics" src="https://github.com/user-attachments/assets/4d5864a6-4125-4e61-86df-eb4d41533507" />
+<img width="1919" alt="User-friendly form interface for entering partner details with real-time validation" src="https://github.com/user-attachments/assets/5b2f943d-c673-491f-8899-a7aef9b981af" />
 
-### Results Visualization
-<img width="1919" alt="Results Table" src="https://github.com/user-attachments/assets/33f0d466-db55-4c11-a1b9-64e5fb1d5ba5" />
+<br>
+
+### **Enterprise Batch Processing**
+*High-volume CSV upload and processing for operational efficiency*
+
+<img width="1919" alt="Professional CSV upload interface with drag-and-drop functionality and progress tracking" src="https://github.com/user-attachments/assets/fc3a6177-22f8-41ee-bf50-157fea60d166" />
+
+<br>
+
+### **Model Performance Analytics**
+*Real-time monitoring of ML model accuracy and reliability metrics*
+
+<img width="1919" alt="Comprehensive analytics dashboard showing model performance with accuracy, precision, recall, and F1-score" src="https://github.com/user-attachments/assets/4662683b-cb48-4e42-8e53-cd0214537613" />
+
+<br>
+
+### **AI Fairness & Bias Detection**
+*Ethical AI implementation with comprehensive bias monitoring and reporting*
+
+<img width="830" alt="Advanced fairness metrics visualization showing selection rates and equal opportunity across demographic groups" src="https://github.com/user-attachments/assets/4d5864a6-4125-4e61-86df-eb4d41533507" />
+
+<br>
+
+### **Intelligent Results Display**
+*Professional data visualization with exportable comprehensive reports*
+
+<img width="1919" alt="Clean, organized results table with prediction outcomes and detailed partner information" src="https://github.com/user-attachments/assets/33f0d466-db55-4c11-a1b9-64e5fb1d5ba5" />
+
+---
 
 </div>
 
-## 🛠 Technology Stack
+## Technology Stack
 
 ### **Backend**
 - **Framework**: Flask 2.0+ with CORS support
@@ -135,7 +159,6 @@ pip install -r requirements.txt
 
 ### Running the Application
 
-#### Option 1: Full Application (Recommended)
 ```bash
 python main.py
 ```
@@ -143,23 +166,6 @@ python main.py
 - Starts Flask server on `http://127.0.0.1:5000`
 - Open `index.html` in your browser (or serve on port 5500+ via Live Server)
 
-#### Option 2: Pre-trained Model Server
-```bash
-# First, train and export the model
-python train_and_export_model.py
-
-# Then run the lightweight server
-python app.py
-```
-
-#### Option 3: Interactive Mode
-```bash
-# Single prediction with user input
-python main-ask.py
-
-# Batch processing mode
-python main-many.py
-```
 
 ### Usage
 
@@ -247,18 +253,50 @@ GrabHack-Project-Nova/
 
 ## API Documentation
 
-### Endpoints
+### Base URLs
 
-> - For **local development**: `http://127.0.0.1:5000`
-> - For **production**: `https://grabhack-project-nova.onrender.com`
+| Environment | Base URL | Description |
+|-------------|----------|-------------|
+| **Local Development** | `http://127.0.0.1:5000` | Local Flask development server |
+| **Production** | `https://grabhack-project-nova.onrender.com` | Deployed production instance |
 
-#### `POST /predict`
-**Single partner eligibility prediction**
+---
 
-**Production URL**: `https://grabhack-project-nova.onrender.com/predict`
-**Local URL**: `http://127.0.0.1:5000/predict`
+### Endpoint Reference
 
-**Request Body:**
+#### Individual Loan Assessment
+
+**`POST /predict`**
+
+Evaluates loan eligibility for a single partner using real-time machine learning predictions.
+
+**Endpoint URLs:**
+- Production: `https://grabhack-project-nova.onrender.com/predict`
+- Development: `http://127.0.0.1:5000/predict`
+
+**Request Headers:**
+```http
+Content-Type: application/json
+Accept: application/json
+```
+
+**Request Body Schema:**
+```json
+{
+  "Partner Type": "string",                    // Required: "Merchant" | "Driver"
+  "Earnings (Value)": "number",                // Required: Monthly earnings (0-100000)
+  "Earnings (Stability Type)": "string",       // Required: "Stable" | "Variable" | "Seasonal"
+  "Perf. Rating (Avg)": "number",             // Required: Performance rating (1.0-5.0)
+  "Time on Platform (Months)": "number",      // Required: Partnership duration (0-120)
+  "Order/Trip Volume": "number",               // Required: Monthly transactions (0-2000)
+  "Financial Activity (Score)": "number",     // Required: Engagement score (0.0-1.0)
+  "Earnings Volatility": "number",            // Required: Income stability (0.0-1.0)
+  "On-Time Loan Repayments": "number",        // Required: Historical repayments (0-50)
+  "Operational Anomaly Score": "number"       // Required: Risk assessment (0.0-1.0)
+}
+```
+
+**Example Request:**
 ```json
 {
   "Partner Type": "Merchant",
@@ -274,28 +312,57 @@ GrabHack-Project-Nova/
 }
 ```
 
-**Response:**
+**Success Response (200 OK):**
 ```json
 {
-  "prediction": "Eligible",
+  "prediction": "Eligible",                    // "Eligible" | "Not Eligible"
   "metrics": {
-    "accuracy": 0.9890,
-    "precision": 0.9892,
-    "recall": 0.9892,
-    "f1_score": 0.9892
+    "accuracy": 0.9890,                       // Model accuracy score
+    "precision": 0.9892,                      // Precision metric
+    "recall": 0.9892,                         // Recall metric
+    "f1_score": 0.9892                        // F1-score metric
   }
 }
 ```
 
-#### `POST /predict_csv`
-**Bulk prediction from CSV upload**
+**Error Response (400 Bad Request):**
+```json
+{
+  "error": "Invalid earnings: 150000. Must be between 0 and 100000."
+}
+```
 
-**Production URL**: `https://grabhack-project-nova.onrender.com/predict_csv`
-**Local URL**: `http://127.0.0.1:5000/predict_csv`
+---
 
-**Request:** Multipart form data with CSV file
+#### Bulk Loan Assessment
 
-**Response:**
+**`POST /predict_csv`**
+
+Processes multiple loan applications simultaneously via CSV file upload with comprehensive fairness analysis.
+
+**Endpoint URLs:**
+- Production: `https://grabhack-project-nova.onrender.com/predict_csv`
+- Development: `http://127.0.0.1:5000/predict_csv`
+
+**Request Headers:**
+```http
+Content-Type: multipart/form-data
+Accept: application/json
+```
+
+**Request Body:**
+```
+Form Data:
+- file: CSV file containing partner data (max 10MB recommended)
+```
+
+**CSV File Format:**
+The uploaded CSV must contain the following columns with exact header names:
+```csv
+Partner ID,Partner Type,Earnings (Value),Earnings (Stability Type),Perf. Rating (Avg),Time on Platform (Months),Order/Trip Volume,Financial Activity (Score),Earnings Volatility,On-Time Loan Repayments,Operational Anomaly Score
+```
+
+**Success Response (200 OK):**
 ```json
 {
   "predictions": [
@@ -333,6 +400,15 @@ GrabHack-Project-Nova/
   "fairness_observation": "Driver group approval rate is 4.00% higher than Merchant group."
 }
 ```
+
+**Error Response (400 Bad Request):**
+```json
+{
+  "error": "No file part in the request"
+}
+```
+
+---
 
 ### Input Validation
 
@@ -391,7 +467,7 @@ The system monitors fairness across partner types:
 - **Feature Engineering**: One-hot encoding for categorical variables
 - **Regularization**: Built-in L1/L2 regularization in XGBoost
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](Contribute.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
 
@@ -405,7 +481,7 @@ We welcome contributions! Please see our [Contributing Guide](Contribute.md) and
 6. Open a Pull Request
 
 
-## 👥 Authors & Acknowledgments
+## Authors & Acknowledgments
 
 - **AyushMann29** - *Project Lead & Development* - [GitHub](https://github.com/AyushMann29)
 
