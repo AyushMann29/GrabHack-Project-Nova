@@ -317,10 +317,12 @@ Thanks to all our amazing contributors for their support and code!
   <img src="https://contrib.rocks/image?repo=AyushMann29/GrabHack-Project-Nova" />
 </a>
 
-<div align="center">
-
-**🌟 Star this repository if you found it helpful!**
 
 [Report Bug](https://github.com/AyushMann29/GrabHack-Project-Nova/issues) • [Request Feature](https://github.com/AyushMann29/GrabHack-Project-Nova/issues)
+[![License](https://img.shields.io/github/license/AyushMann29/GrabHack-Project-Nova)](https://github.com/AyushMann29/GrabHack-Project-Nova/blob/main/LICENSE)
 
-</div>
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+
