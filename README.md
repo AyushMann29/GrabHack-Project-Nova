@@ -319,7 +319,6 @@ Thanks to all our amazing contributors for their support and code!
 
 
 [Report Bug](https://github.com/AyushMann29/GrabHack-Project-Nova/issues) • [Request Feature](https://github.com/AyushMann29/GrabHack-Project-Nova/issues)
-[![License](https://img.shields.io/github/license/AyushMann29/GrabHack-Project-Nova)](https://github.com/AyushMann29/GrabHack-Project-Nova/blob/main/LICENSE)
 
 ## License
 
