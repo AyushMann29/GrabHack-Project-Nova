@@ -283,16 +283,16 @@ Accept: application/json
 **Request Body Schema:**
 ```json
 {
-  "Partner Type": "string",                    // Required: "Merchant" | "Driver"
-  "Earnings (Value)": "number",                // Required: Monthly earnings (0-100000)
-  "Earnings (Stability Type)": "string",       // Required: "Stable" | "Variable" | "Seasonal"
-  "Perf. Rating (Avg)": "number",             // Required: Performance rating (1.0-5.0)
-  "Time on Platform (Months)": "number",      // Required: Partnership duration (0-120)
-  "Order/Trip Volume": "number",               // Required: Monthly transactions (0-2000)
-  "Financial Activity (Score)": "number",     // Required: Engagement score (0.0-1.0)
-  "Earnings Volatility": "number",            // Required: Income stability (0.0-1.0)
-  "On-Time Loan Repayments": "number",        // Required: Historical repayments (0-50)
-  "Operational Anomaly Score": "number"       // Required: Risk assessment (0.0-1.0)
+  "Partner Type": "string",                   
+  "Earnings (Value)": "number",                
+  "Earnings (Stability Type)": "string",    
+  "Perf. Rating (Avg)": "number",             
+  "Time on Platform (Months)": "number",      
+  "Order/Trip Volume": "number",              
+  "Financial Activity (Score)": "number",     
+  "Earnings Volatility": "number",           
+  "On-Time Loan Repayments": "number",       
+  "Operational Anomaly Score": "number"      
 }
 ```
 
@@ -315,12 +315,12 @@ Accept: application/json
 **Success Response (200 OK):**
 ```json
 {
-  "prediction": "Eligible",                    // "Eligible" | "Not Eligible"
+  "prediction": "Eligible",                 
   "metrics": {
-    "accuracy": 0.9890,                       // Model accuracy score
-    "precision": 0.9892,                      // Precision metric
-    "recall": 0.9892,                         // Recall metric
-    "f1_score": 0.9892                        // F1-score metric
+    "accuracy": 0.9890,                    
+    "precision": 0.9892,                     
+    "recall": 0.9892,                      
+    "f1_score": 0.9892                       
   }
 }
 ```
