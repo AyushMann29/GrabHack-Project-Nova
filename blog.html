@@ -9,6 +9,31 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-y: scroll; /* Always show vertical scrollbar */
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+        width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+        background: #f1f5f9; /* Tailwind's slate-100 */
+        }
+
+        ::-webkit-scrollbar-thumb {
+        background: #6366f1; /* Tailwind indigo-500 */
+        border-radius: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+        background: #4f46e5; /* Tailwind indigo-600 */
+        }
+
+
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -22,7 +47,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="bg-slate-50 text-slate-800 overflow-y-scroll">
 
     <!-- Header Section -->
     <header class="relative text-white overflow-hidden">

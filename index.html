@@ -99,7 +99,34 @@
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
     </button>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-y: scroll; /* Always show vertical scrollbar */
+        }
+        /* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* Tailwind's slate-100 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6366f1; /* Tailwind indigo-500 */
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4f46e5; /* Tailwind indigo-600 */
+}
+
+
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6 overflow-y-scroll">
     <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-5xl w-full">
         <!-- Header -->
         <header class="text-center mb-10">
