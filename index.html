@@ -9,9 +9,84 @@
         body {
             font-family: 'Inter', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .table-auto {
             table-layout: auto;
+        }
+        .dark-mode {
+            background-color: #1a1a2e;
+            color: #eee;
+        }
+        .dark-mode .bg-white {
+            background-color: #16213e !important;
+        }
+        .dark-mode .text-gray-700 {
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .text-gray-600 {
+            color: #b0b0b0 !important;
+        }
+        .dark-mode .text-gray-500 {
+            color: #909090 !important;
+        }
+        .dark-mode .bg-gray-50 {
+            background-color: #0f3460 !important;
+        }
+        .dark-mode .bg-gray-100 {
+            background-color: #1a1a2e !important;
+        }
+        .dark-mode .bg-gray-200 {
+            background-color: #16213e !important;
+        }
+        .dark-mode .border-gray-200 {
+            border-color: #2d3748 !important;
+        }
+        .dark-mode .border-gray-300 {
+            border-color: #4a5568 !important;
+        }
+        .dark-mode .divide-gray-200 > * {
+            border-color: #2d3748 !important;
+        }
+        .dark-mode input, .dark-mode select {
+            background-color: #0f3460 !important;
+            color: #e0e0e0 !important;
+            border-color: #4a5568 !important;
+        }
+        .dark-mode .hover\:shadow-lg:hover {
+            box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.1) !important;
+        }
+        .dark-mode .shadow-2xl {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        }
+        .dark-mode .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: white;
         }
         .dark-mode {
             background-color: #1a1a2e;
@@ -99,31 +174,7 @@
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
     </button>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-y: scroll; /* Always show vertical scrollbar */
-        }
-        /* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9; /* Tailwind's slate-100 */
-}
-
-::-webkit-scrollbar-thumb {
-  background: #6366f1; /* Tailwind indigo-500 */
-  border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #4f46e5; /* Tailwind indigo-600 */
-}
-
-
+        
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6 overflow-y-scroll">
@@ -332,6 +383,36 @@
         });
     });
 
+    // Dark Mode Toggle
+    document.addEventListener('DOMContentLoaded', () => {
+        const themeToggle = document.getElementById('themeToggle');
+        const sunIcon = document.getElementById('sunIcon');
+        const moonIcon = document.getElementById('moonIcon');
+        const body = document.body;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            body.classList.add('dark-mode');
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                localStorage.setItem('theme', 'light');
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            }
+        });
+    });
+
     function displayFairnessMetrics(fairnessMetrics, fairnessObservation) {
         const fairnessSection = document.getElementById('fairness-section');
         const fairnessTable = document.getElementById('fairness-table');
@@ -401,6 +482,8 @@
                 singleEntryForm.classList.remove('hidden');
                 csvUploadForm.classList.add('hidden');
                 predictionResult.classList.add('hidden');
+                csvResultsContainer.classList.add('hidden');
+                fairnessSection.classList.add('hidden');
                 csvResultsContainer.classList.add('hidden');
                 fairnessSection.classList.add('hidden');
             });
@@ -530,6 +613,7 @@
                 predictionResult.innerHTML = 'Processing CSV file...';
                 predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
                 csvResultsContainer.classList.add('hidden');
+                csvResultsContainer.classList.add('hidden');
                 
                 const csvFile = document.getElementById('csvFile').files[0];
                 if (!csvFile) {
@@ -558,6 +642,7 @@
                     displayFairnessMetrics(result.fairness_metrics, result.fairness_observation);
                     displayCsvResults(result.predictions);
                     
+                    csvResultsContainer.classList.remove('hidden');
                     csvResultsContainer.classList.remove('hidden');
                     predictionResult.classList.add('hidden');
                 } catch (error) {
@@ -598,4 +683,5 @@
         });
     </script>
 </body>
+
 </html>
