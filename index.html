@@ -217,7 +217,7 @@
                 <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
                     <label for="volume" class="block text-sm font-semibold text-gray-700 mb-1">Order/Trip Volume</label>
                     <input type="number" id="volume" name="Order/Trip Volume" required  min="1"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" oninput="checkVolume(this)">
+                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" ">
 
                 </div>
 
@@ -345,13 +345,8 @@
             }
         });
     });
-    function checkVolume(input) {
-  if (input.value === '0') {
-    alert("You cannot enter 0. Please enter a value of 1 or more.");
-    input.value = ''; // This clears the invalid input
-  }
-}
 
+ 
     function displayFairnessMetrics(fairnessMetrics, fairnessObservation) {
         const fairnessSection = document.getElementById('fairness-section');
         const fairnessTable = document.getElementById('fairness-table');
@@ -528,22 +523,28 @@
                     displayMetrics(result.metrics);
 
                     const predictionValue = (result && result.prediction) ? String(result.prediction).toLowerCase() : '';
-                    predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
-                    if (predictionValue === 'eligible') {
-                        predictionResult.textContent = 'Congratulations! You are eligible for a loan.';
-                        predictionResult.classList.add('bg-green-100', 'text-green-800');
-                    } else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
-                        predictionResult.textContent = "We're sorry, you are not eligible for a loan at this time.";
-                        predictionResult.classList.add('bg-red-100', 'text-red-800');
-                    } else {
-                        predictionResult.textContent = 'Received a response from the backend, but no prediction was found.';
-                        predictionResult.classList.add('bg-red-100', 'text-red-800');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    predictionResult.textContent = `There was a problem checking your eligibility. Please ensure the backend is running at ${backendEndpoint}.`;
-                    predictionResult.classList.add('bg-red-100', 'text-red-800');
-                }
+predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+
+if (predictionValue === 'eligible') {
+    // For Eligible: Uses a larger emoji and bold text.
+    predictionResult.innerHTML = `<span style="font-size: 2rem;">🥳</span> <strong>Congratulations!</strong> You are eligible for a loan.`;
+    predictionResult.classList.add('bg-green-100', 'text-green-800');
+} else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
+    // For Not Eligible: Uses a larger emoji and bold text with a different background color.
+    predictionResult.innerHTML = `<span style="font-size: 2rem;">😔</span> <strong>We're sorry,</strong> you are not eligible for a loan at this time.`;
+    predictionResult.classList.add('bg-red-200', 'text-red-800');
+} else {
+    // For other cases: Uses a larger emoji and bold text for clarity.
+    predictionResult.innerHTML = `<span style="font-size: 2rem;">🤔</span> <strong>Received a response from the backend,</strong> but no prediction was found.`;
+    predictionResult.classList.add('bg-red-200', 'text-red-800');
+}
+
+} catch (error) {
+    console.error('Error:', error);
+    // For errors: Uses a large emoji and bold text.
+    predictionResult.innerHTML = `<span style="font-size: 2rem;">😬</span> <strong>There was a problem checking your eligibility.</strong> Please ensure the backend is running at ${backendEndpoint}.`;
+    predictionResult.classList.add('bg-red-200', 'text-red-800');
+}
             });
 
             csvForm.addEventListener('submit', async (e) => {
