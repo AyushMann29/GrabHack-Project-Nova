@@ -9,13 +9,12 @@
         body {
             font-family: 'Inter', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
         .table-auto {
             table-layout: auto;
         }
         .dark-mode {
-            background-color: #1a1a2e;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
             color: #eee;
         }
         .dark-mode .bg-white {
@@ -30,79 +29,11 @@
         .dark-mode .text-gray-500 {
             color: #909090 !important;
         }
-        .dark-mode .bg-gray-50 {
-            background-color: #0f3460 !important;
+        .dark-mode .text-gray-400 {
+            color: #a0a0a0 !important;
         }
-        .dark-mode .bg-gray-100 {
-            background-color: #1a1a2e !important;
-        }
-        .dark-mode .bg-gray-200 {
-            background-color: #16213e !important;
-        }
-        .dark-mode .border-gray-200 {
-            border-color: #2d3748 !important;
-        }
-        .dark-mode .border-gray-300 {
-            border-color: #4a5568 !important;
-        }
-        .dark-mode .divide-gray-200 > * {
-            border-color: #2d3748 !important;
-        }
-        .dark-mode input, .dark-mode select {
-            background-color: #0f3460 !important;
-            color: #e0e0e0 !important;
-            border-color: #4a5568 !important;
-        }
-        .dark-mode .hover\:shadow-lg:hover {
-            box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.1) !important;
-        }
-        .dark-mode .shadow-2xl {
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
-        }
-        .dark-mode .shadow-md {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
-        }
-        .theme-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            color: white;
-        }
-        .dark-mode {
-            background-color: #1a1a2e;
-            color: #eee;
-        }
-        .dark-mode .bg-white {
-            background-color: #16213e !important;
-        }
-        .dark-mode .text-gray-700 {
-            color: #e0e0e0 !important;
-        }
-        .dark-mode .text-gray-600 {
-            color: #b0b0b0 !important;
-        }
-        .dark-mode .text-gray-500 {
-            color: #909090 !important;
+        .dark-mode .text-red-400 {
+            color: #f87171 !important;
         }
         .dark-mode .bg-gray-50 {
             background-color: #0f3460 !important;
@@ -185,6 +116,7 @@
                 Nova: Loan Eligibility Checker
             </h1>
             <p class="text-gray-600 mt-3 text-lg">Enter your data to check your loan eligibility.</p>
+            <p class="text-sm text-gray-400">Powered by Grab</p>
             <p class="text-xs text-red-400 mt-2">⚠️ Backend may take a few minutes to wake up</p>
             
             <!-- Blog Link -->
@@ -680,6 +612,34 @@
                 html += `</tbody></table></div>`;
                 csvResultsTable.innerHTML = html;
             }
+            
+            // Theme Toggle Functionality
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const body = document.body;
+
+            // Check for saved theme preference or default to light mode
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            if (currentTheme === 'dark') {
+                body.classList.add('dark-mode');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+
+            themeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
+                
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                }
+            });
         });
     </script>
 </body>
