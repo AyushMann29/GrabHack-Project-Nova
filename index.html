@@ -692,6 +692,7 @@
             const fbForm = document.getElementById('feedback-form');
             const fbStatus = document.getElementById('fb-status');
             const fbSubmit = document.getElementById('fb-submit');
+            const fbClear = document.getElementById('fb-clear');
 
             function setStatus(message, type = 'info') {
                 fbStatus.textContent = message;
@@ -731,6 +732,10 @@
                 } finally {
                     fbSubmit.disabled = false;
                 }
+            });
+
+            fbClear.addEventListener('click', () => {
+                fbForm.reset();
             });
         });
     </script>
