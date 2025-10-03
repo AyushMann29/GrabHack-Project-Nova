@@ -67,10 +67,38 @@
         .dark-mode .shadow-md {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
         }
+
+        /* Styling for the Guidelines Button */
+        .guidelines-button {
+            position: fixed;
+            top: 20px;
+            left: 20px; /* Positioned on the top left */
+            z-index: 1000;
+            background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+            border: none;
+            border-radius: 9999px; 
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .guidelines-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Theme Toggle Styling (remains on the right) */
         .theme-toggle {
             position: fixed;
             top: 20px;
-            right: 20px;
+            right: 20px; /* Original position */
             z-index: 1000;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -93,9 +121,62 @@
             height: 24px;
             color: white;
         }
+
+        /* Modal Styles - CRITICAL FIXES APPLIED HERE */
+        .modal-backdrop {
+            position: fixed; /* Ensures it covers the viewport */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Covers entire viewport width */
+            height: 100vh; /* Covers entire viewport height */
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1050;
+            display: none;
+            /* New centering properties for the modal content */
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto; /* Allows scrolling if content is too long */
+        }
+        .modal-content {
+            background-color: white;
+            /* Removed margin: 10vh auto; since flex handles centering */
+            padding: 40px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            color: #333;
+            /* Ensures it stays within the viewport on small screens */
+            max-height: 90vh; 
+            overflow-y: auto;
+        }
+        .dark-mode .modal-content {
+            background-color: #1a1a2e;
+            color: #eee;
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-button:hover {
+            color: #666;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6">
+<body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen p-6 overflow-y-scroll">
+    <!-- Guidelines Button: Now triggers the modal -->
+    <button id="showGuidelinesButton" class="guidelines-button">
+        Guidelines
+    </button>
+
     <!-- Theme Toggle Button -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="sunIcon" fill="currentColor" viewBox="0 0 20 20">
@@ -105,183 +186,218 @@
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
     </button>
-        
-    </style>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6 overflow-y-scroll">
-    <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-5xl w-full">
-        <!-- Header -->
-        <header class="text-center mb-10">
-            <h1 class="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                Nova: Loan Eligibility Checker
-            </h1>
-            <p class="text-gray-600 mt-3 text-lg">Enter your data to check your loan eligibility.</p>
-            <p class="text-sm text-gray-400">Powered by <a href="https://www.grab.com/sg/" target="_blank" class="text-blue-500 hover:underline">Grab</a></p>
-            <p class="text-xs text-red-400 mt-2">⚠️ Backend may take a few minutes to wake up</p>
+    
+    <!-- Modal Backdrop and Content -->
+    <div id="guidelinesModal" class="modal-backdrop">
+        <div class="modal-content">
+            <span class="close-button" id="closeGuidelinesModal">&times;</span>
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Loan Eligibility Guide</h2>
+            <p class="mb-4 text-lg">This tool uses a machine learning model to estimate your loan eligibility based on the following criteria. Please read the guidelines carefully to understand how your data is evaluated.</p>
             
-            <!-- Blog Link -->
-            <div class="mt-4">
-                <a href="blog.html" target="_blank" 
-                   class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium rounded-full hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                    Read Our Story
-                </a>
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold border-b pb-1 dark:border-gray-700">1. Data Entry Requirements</h3>
+                <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700 dark:text-gray-400">
+                    <li>All fields are **mandatory**. Ensure no field is left blank.</li>
+                    <li>**Earnings (Value):** Must be a positive numerical figure (e.g., total monthly income/revenue).</li>
+                    <li>**Performance Rating (Avg):** Must be between 1.0 and 5.0.</li>
+                    <li>**Financial Activity (Score):** Must be a value between 0.0 and 1.0.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold border-b pb-1 dark:border-gray-700">2. Key Eligibility Factors</h3>
+                <p class="text-gray-700 dark:text-gray-400">The model places significant weight on the stability and history of your activity:</p>
+                <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700 dark:text-gray-400">
+                    <li>**Time on Platform:** Longer time indicates a more reliable history and generally increases eligibility.</li>
+                    <li>**Earnings Stability:** "Stable" earnings are favored over "Variable" or "Seasonal" earnings.</li>
+                    <li>**On-Time Loan Repayments:** A high number of on-time repayments is crucial for a positive result.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold border-b pb-1 dark:border-gray-700">3. Understanding the Results</h3>
+                <p class="text-gray-700 dark:text-gray-400">The model outputs one of two possible predictions:</p>
+                <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700 dark:text-gray-400">
+                    <li>**Eligible (🥳):** The model predicts a high probability of successful loan repayment.</li>
+                    <li>**Not Eligible (😔):** The model indicates that based on the current data, the risk profile does not meet the minimum lending criteria.</li>
+                </ul>
             </div>
-        </header>
-
-        <section id="metrics-section" class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200 hidden">
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Model Performance Metrics</h2>
-            <div id="metrics-data" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
-                </div>
-            <p class="text-xs text-gray-500 mt-4">
-                These metrics represent the model's performance on a historical dataset.
-            </p>
-        </section>
-
-        <!-- Tabs -->
-        <div class="flex justify-center mb-8">
-            <button id="tab-single" 
-                class="tab-button px-6 py-2 rounded-full text-sm font-medium bg-blue-600 text-white shadow-md hover:scale-105 transition">
-                Single Entry
-            </button>
-            <button id="tab-csv" 
-                class="tab-button px-6 py-2 ml-3 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition">
-                Upload CSV
-            </button>
         </div>
-        
-        <div id="csv-results-container" class="hidden">
-            <section id="fairness-section" class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200 hidden">
-                <h2 class="text-xl font-semibold text-gray-700 mb-4">Fairness Metrics by Group</h2>
-                <div id="fairness-table" class="mb-6"></div>
-                <canvas id="fairness-chart" height="200"></canvas>
-                <div id="fairness-observation" class="mt-4 text-gray-700 font-medium"></div>
+    </div>
+    
+    <!-- Centering Container for Main Content -->
+    <div class="flex items-center justify-center">
+        <!-- Main Content Starts Here -->
+        <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-5xl w-full">
+            <header class="text-center mb-10">
+                <h1 class="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                    Nova: Loan Eligibility Checker
+                </h1>
+                <p class="text-gray-600 mt-3 text-lg">Enter your data to check your loan eligibility.</p>
+                <p class="text-sm text-gray-400">Powered by <a href="https://www.grab.com/sg/" target="_blank" class="text-blue-500 hover:underline">Grab</a></p>
+                <p class="text-xs text-red-400 mt-2">⚠️ Backend may take a few minutes to wake up</p>
+                
+                <!-- Blog Link -->
+                <div class="mt-4">
+                    <a href="blog.html" target="_blank" 
+                        class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium rounded-full hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                        Read Our Story
+                    </a>
+                </div>
+            </header>
+
+            <section id="metrics-section" class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200 hidden">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4">Model Performance Metrics</h2>
+                <div id="metrics-data" class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700">
+                </div>
+                <p class="text-xs text-gray-500 mt-4">
+                    These metrics represent the model's performance on a historical dataset.
+                </p>
+            </section>
+
+            <!-- Tabs -->
+            <div class="flex justify-center mb-8">
+                <button id="tab-single" 
+                    class="tab-button px-6 py-2 rounded-full text-sm font-medium bg-blue-600 text-white shadow-md hover:scale-105 transition">
+                    Single Entry
+                </button>
+                <button id="tab-csv" 
+                    class="tab-button px-6 py-2 ml-3 rounded-full text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition">
+                    Upload CSV
+                </button>
+            </div>
+            
+            <div id="csv-results-container" class="hidden">
+                <section id="fairness-section" class="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200 hidden">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4">Fairness Metrics by Group</h2>
+                    <div id="fairness-table" class="mb-6"></div>
+                    <canvas id="fairness-chart" height="200"></canvas>
+                    <div id="fairness-observation" class="mt-4 text-gray-700 font-medium"></div>
+                </section>
+                
+                <section id="csv-results-table" class="mt-6 hidden">
+                </section>
+            </div>
+
+            <!-- Single Entry Form -->
+            <section id="single-entry-form" class="space-y-6">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Your Information</h2>
+                <form id="loan-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Partner Type -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="partnerType" class="block text-sm font-semibold text-gray-700 mb-1">Partner Type</label>
+                        <select id="partnerType" name="Partner Type" required 
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Select...</option>
+                            <option value="Merchant">Merchant</option>
+                            <option value="Driver">Driver</option>
+                        </select>
+                    </div>
+
+                    <!-- Earnings Value -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="earningsValue" class="block text-sm font-semibold text-gray-700 mb-1">Earnings (Value)</label>
+                        <input type="number" id="earningsValue" name="Earnings (Value)" required min="0"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Earnings Stability -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="earningsStability" class="block text-sm font-semibold text-gray-700 mb-1">Earnings (Stability Type)</label>
+                        <select id="earningsStability" name="Earnings (Stability Type)" required 
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">Select stability...</option>
+                            <option value="Stable">Stable</option>
+                            <option value="Variable">Variable</option>
+                            <option value="Seasonal">Seasonal</option>
+                        </select>
+                    </div>
+
+                    <!-- Performance Rating -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="perfRating" class="block text-sm font-semibold text-gray-700 mb-1">Performance Rating (Avg)</label>
+                        <input type="number" id="perfRating" name="Perf. Rating (Avg)" required min="1" max="5" step="0.1"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Time on Platform -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="timeOnPlatform" class="block text-sm font-semibold text-gray-700 mb-1">Time on Platform (Months)</label>
+                        <input type="number" id="timeOnPlatform" name="Time on Platform (Months)" required min="1"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Volume -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="volume" class="block text-sm font-semibold text-gray-700 mb-1">Order/Trip Volume</label>
+                        <input type="number" id="volume" name="Order/Trip Volume" required  min="1"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" ">
+
+                    </div>
+
+                    <!-- Financial Activity -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="financialActivity" class="block text-sm font-semibold text-gray-700 mb-1">Financial Activity (Score)</label>
+                        <input type="number" id="financialActivity" name="Financial Activity (Score)" required min="0" max="1" step="0.1"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Earnings Volatility -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="earningsVolatility" class="block text-sm font-semibold text-gray-700 mb-1">Earnings Volatility</label>
+                        <input type="number" id="earningsVolatility" name="Earnings Volatility" required min="0" step="0.01"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- On-Time Loan Repayments -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="repayments" class="block text-sm font-semibold text-gray-700 mb-1">On-Time Loan Repayments</label>
+                        <input type="number" id="repayments" name="On-Time Loan Repayments" required min="0" step="1"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Operational Anomaly Score -->
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="anomalyScore" class="block text-sm font-semibold text-gray-700 mb-1">Operational Anomaly Score</label>
+                        <input type="number" id="anomalyScore" name="Operational Anomaly Score" required min="0" max="1" step="0.01"
+                            class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    
+                    <!-- Submit -->
+                    <div class="col-span-1 md:col-span-2">
+                        <button type="submit" 
+                            class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md hover:scale-[1.02] transition">
+                            Check Eligibility
+                        </button>
+                    </div>
+                </form>
             </section>
             
-            <section id="csv-results-table" class="mt-6 hidden">
-                </section>
-        </div>
-
-        <!-- Single Entry Form -->
-        <section id="single-entry-form" class="space-y-6">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Your Information</h2>
-            <form id="loan-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                <!-- Partner Type -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="partnerType" class="block text-sm font-semibold text-gray-700 mb-1">Partner Type</label>
-                    <select id="partnerType" name="Partner Type" required 
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                        <option value="">Select...</option>
-                        <option value="Merchant">Merchant</option>
-                        <option value="Driver">Driver</option>
-                    </select>
-                </div>
-
-                <!-- Earnings Value -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="earningsValue" class="block text-sm font-semibold text-gray-700 mb-1">Earnings (Value)</label>
-                    <input type="number" id="earningsValue" name="Earnings (Value)" required min="0"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <!-- Earnings Stability -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="earningsStability" class="block text-sm font-semibold text-gray-700 mb-1">Earnings (Stability Type)</label>
-                    <select id="earningsStability" name="Earnings (Stability Type)" required 
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                        <option value="">Select stability...</option>
-                        <option value="Stable">Stable</option>
-                        <option value="Variable">Variable</option>
-                        <option value="Seasonal">Seasonal</option>
-                    </select>
-                </div>
-
-                <!-- Performance Rating -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="perfRating" class="block text-sm font-semibold text-gray-700 mb-1">Performance Rating (Avg)</label>
-                    <input type="number" id="perfRating" name="Perf. Rating (Avg)" required min="1" max="5" step="0.1"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <!-- Time on Platform -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="timeOnPlatform" class="block text-sm font-semibold text-gray-700 mb-1">Time on Platform (Months)</label>
-                    <input type="number" id="timeOnPlatform" name="Time on Platform (Months)" required min="1"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <!-- Volume -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="volume" class="block text-sm font-semibold text-gray-700 mb-1">Order/Trip Volume</label>
-                    <input type="number" id="volume" name="Order/Trip Volume" required  min="1"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500" ">
-
-                </div>
-
-                <!-- Financial Activity -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="financialActivity" class="block text-sm font-semibold text-gray-700 mb-1">Financial Activity (Score)</label>
-                    <input type="number" id="financialActivity" name="Financial Activity (Score)" required min="0" max="1" step="0.1"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <!-- Earnings Volatility -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="earningsVolatility" class="block text-sm font-semibold text-gray-700 mb-1">Earnings Volatility</label>
-                    <input type="number" id="earningsVolatility" name="Earnings Volatility" required min="0" step="0.01"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <!-- On-Time Loan Repayments -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="repayments" class="block text-sm font-semibold text-gray-700 mb-1">On-Time Loan Repayments</label>
-                    <input type="number" id="repayments" name="On-Time Loan Repayments" required min="0" step="1"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-
-                <!-- Operational Anomaly Score -->
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="anomalyScore" class="block text-sm font-semibold text-gray-700 mb-1">Operational Anomaly Score</label>
-                    <input type="number" id="anomalyScore" name="Operational Anomaly Score" required min="0" max="1" step="0.01"
-                        class="block w-full rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500">
-                </div>
-                
-                <!-- Submit -->
-                <div class="col-span-1 md:col-span-2">
+            <!-- CSV Upload -->
+            <section id="csv-upload-form" class="hidden">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-4">Upload a CSV File</h2>
+                <form id="csv-form" class="space-y-6">
+                    <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
+                        <label for="csvFile" class="block text-sm font-semibold text-gray-700 mb-1">Select CSV File</label>
+                        <input type="file" id="csvFile" name="file" accept=".csv" required
+                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full 
+                            file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
                     <button type="submit" 
                         class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md hover:scale-[1.02] transition">
-                        Check Eligibility
+                        Process CSV
                     </button>
-                </div>
-            </form>
-        </section>
-        
-        <!-- CSV Upload -->
-        <section id="csv-upload-form" class="hidden">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-4">Upload a CSV File</h2>
-            <form id="csv-form" class="space-y-6">
-                <div class="bg-gray-50 p-4 rounded-xl border hover:shadow-lg transition">
-                    <label for="csvFile" class="block text-sm font-semibold text-gray-700 mb-1">Select CSV File</label>
-                    <input type="file" id="csvFile" name="file" accept=".csv" required
-                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full 
-                        file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                </div>
-                <button type="submit" 
-                    class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-4 rounded-xl shadow-md hover:scale-[1.02] transition">
-                    Process CSV
-                </button>
-            </form>
-        </section>
+                </form>
+            </section>
 
-        <!-- Result -->
-        <section id="result-section" class="mt-10">
-            <div id="prediction-result" 
-                class="hidden p-6 text-center text-lg font-semibold rounded-xl shadow-md">
-            </div>
-        </section>
+            <!-- Result -->
+            <section id="result-section" class="mt-10">
+                <div id="prediction-result" 
+                    class="hidden p-6 text-center text-lg font-semibold rounded-xl shadow-md">
+                </div>
+            </section>
+        </div>
+        <!-- Main Content Ends Here -->
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -316,37 +432,7 @@
         });
     });
 
-    // Dark Mode Toggle
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const body = document.body;
-
-        // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            body.classList.add('dark-mode');
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                localStorage.setItem('theme', 'light');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        });
-    });
-
- 
+    // Helper function for fairness metrics (restored)
     function displayFairnessMetrics(fairnessMetrics, fairnessObservation) {
         const fairnessSection = document.getElementById('fairness-section');
         const fairnessTable = document.getElementById('fairness-table');
@@ -391,259 +477,223 @@
         });
         fairnessObservationDiv.textContent = fairnessObservation || '';
     }
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabSingle = document.getElementById('tab-single');
-            const tabCsv = document.getElementById('tab-csv');
-            const singleEntryForm = document.getElementById('single-entry-form');
-            const csvUploadForm = document.getElementById('csv-upload-form');
-            const form = document.getElementById('loan-form');
-            const csvForm = document.getElementById('csv-form');
-            const metricsSection = document.getElementById('metrics-section');
-            const metricsData = document.getElementById('metrics-data');
-            const predictionResult = document.getElementById('prediction-result');
-            
-            const csvResultsContainer = document.getElementById('csv-results-container');
-            const csvResultsTable = document.getElementById('csv-results-table');
-            const fairnessSection = document.getElementById('fairness-section');
+    
+    // Helper function for displaying performance metrics (restored)
+    function displayMetrics(metrics) {
+        const metricsSection = document.getElementById('metrics-section');
+        const metricsData = document.getElementById('metrics-data');
+        metricsSection.classList.remove('hidden');
+        metricsData.innerHTML = `
+            <div class="flex items-center space-x-2">
+                <svg class="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                <p class="font-medium">Accuracy: <span class="text-blue-600">${(metrics.accuracy * 100).toFixed(2)}%</span></p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <svg class="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM11 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM11 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM5 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z" />
+                </svg>
+                <p class="font-medium">Precision: <span class="text-blue-600">${(metrics.precision * 100).toFixed(2)}%</span></p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <svg class="h-6 w-6 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
+                </svg>
+                <p class="font-medium">Recall: <span class="text-blue-600">${(metrics.recall * 100).toFixed(2)}%</span></p>
+            </div>
+            <div class="flex items-center space-x-2">
+                <svg class="h-6 w-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M3 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                    <path d="M10 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z" />
+                </svg>
+                <p class="font-medium">F1-Score: <span class="text-blue-600">${(metrics.f1_score * 100).toFixed(2)}%</span></p>
+            </div>
+        `;
+    }
 
-            tabSingle.addEventListener('click', () => {
-                tabSingle.classList.remove('bg-gray-100', 'text-gray-600');
-                tabSingle.classList.add('bg-blue-600', 'text-white');
-                tabCsv.classList.remove('bg-blue-600', 'text-white');
-                tabCsv.classList.add('bg-gray-100', 'text-gray-600');
-                singleEntryForm.classList.remove('hidden');
-                csvUploadForm.classList.add('hidden');
-                predictionResult.classList.add('hidden');
-                csvResultsContainer.classList.add('hidden');
-                fairnessSection.classList.add('hidden');
-                csvResultsContainer.classList.add('hidden');
-                fairnessSection.classList.add('hidden');
-            });
+    // Data conversion function (restored)
+    function convertToNumbers(data) {
+        const numericKeys = [
+            "Earnings (Value)",
+            "Perf. Rating (Avg)",
+            "Time on Platform (Months)",
+            "Order/Trip Volume",
+            "Financial Activity (Score)",
+            "Earnings Volatility",
+            "On-Time Loan Repayments",
+            "Operational Anomaly Score"
+        ];
+        
+        const newData = { ...data };
 
-            tabCsv.addEventListener('click', () => {
-                tabCsv.classList.remove('bg-gray-100', 'text-gray-600');
-                tabCsv.classList.add('bg-blue-600', 'text-white');
-                tabSingle.classList.remove('bg-blue-600', 'text-white');
-                tabSingle.classList.add('bg-gray-100', 'text-gray-600');
-                csvUploadForm.classList.remove('hidden');
-                singleEntryForm.classList.add('hidden');
-                predictionResult.classList.add('hidden');
-            });
-            
-            function displayMetrics(metrics) {
-                metricsSection.classList.remove('hidden');
-                metricsData.innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <svg class="h-6 w-6 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                        </svg>
-                        <p class="font-medium">Accuracy: <span class="text-blue-600">${(metrics.accuracy * 100).toFixed(2)}%</span></p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <svg class="h-6 w-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM11 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2h-2zM11 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2h-2zM5 9a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5z" />
-                        </svg>
-                        <p class="font-medium">Precision: <span class="text-blue-600">${(metrics.precision * 100).toFixed(2)}%</span></p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <svg class="h-6 w-6 text-indigo-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                        </svg>
-                        <p class="font-medium">Recall: <span class="text-blue-600">${(metrics.recall * 100).toFixed(2)}%</span></p>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <svg class="h-6 w-6 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M3 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-                            <path d="M10 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1z" />
-                        </svg>
-                        <p class="font-medium">F1-Score: <span class="text-blue-600">${(metrics.f1_score * 100).toFixed(2)}%</span></p>
-                    </div>
-                `;
-            }
-
-            function convertToNumbers(data) {
-                const numericKeys = [
-                    "Earnings (Value)",
-                    "Perf. Rating (Avg)",
-                    "Time on Platform (Months)",
-                    "Order/Trip Volume",
-                    "Financial Activity (Score)",
-                    "Earnings Volatility",
-                    "On-Time Loan Repayments",
-                    "Operational Anomaly Score"
-                ];
-                
-                const newData = { ...data };
-
-                for (const key of numericKeys) {
-                    if (newData[key] !== undefined) {
-                        if (key.includes("Score") || key.includes("Volatility") || key.includes("Rating")) {
-                            newData[key] = parseFloat(newData[key]);
-                        } else {
-                            newData[key] = parseInt(newData[key], 10);
-                        }
-                    }
-                }
-                return newData;
-            }
-
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                const data = {};
-                formData.forEach((value, key) => {
-                    data[key] = value;
-                });
-
-                const processedData = convertToNumbers(data);
-
-                const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict';
-                predictionResult.classList.remove('hidden');
-                predictionResult.textContent = 'Checking eligibility...';
-                predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
-                try {
-                    const response = await fetch(backendEndpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(processedData),
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-
-                    console.log("Backend response received:", result);
-
-                    displayMetrics(result.metrics);
-
-                    const predictionValue = (result && result.prediction) ? String(result.prediction).toLowerCase() : '';
-                    predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
-                    if (predictionValue === 'eligible') {
-                        predictionResult.textContent = '🥳 Congratulations! You are eligible for a loan.';
-                        predictionResult.classList.add('bg-green-100', 'text-green-800');
-                    } else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
-                        predictionResult.textContent = "😔 We're sorry, you are not eligible for a loan at this time.";
-                        predictionResult.classList.add('bg-red-100', 'text-red-800');
-                    } else {
-                        predictionResult.textContent = 'Received a response from the backend, but no prediction was found.';
-                        predictionResult.classList.add('bg-red-100', 'text-red-800');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    predictionResult.textContent = `There was a problem checking your eligibility. Please ensure the backend is running at ${backendEndpoint}.`;
-                    predictionResult.classList.add('bg-red-100', 'text-red-800');
-                }
-            });
-
-            csvForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                predictionResult.classList.remove('hidden');
-                predictionResult.innerHTML = 'Processing CSV file...';
-                predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
-                csvResultsContainer.classList.add('hidden');
-                csvResultsContainer.classList.add('hidden');
-                
-                const csvFile = document.getElementById('csvFile').files[0];
-                if (!csvFile) {
-                    predictionResult.textContent = 'Please select a CSV file to upload.';
-                    predictionResult.classList.add('bg-red-100', 'text-red-800');
-                    return;
-                }
-
-                const formData = new FormData();
-                formData.append('file', csvFile);
-
-                const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict_csv'; 
-                try {
-                    const response = await fetch(backendEndpoint, {
-                        method: 'POST',
-                        body: formData,
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-
-                    displayMetrics(result.metrics);
-                    displayFairnessMetrics(result.fairness_metrics, result.fairness_observation);
-                    displayCsvResults(result.predictions);
-                    
-                    csvResultsContainer.classList.remove('hidden');
-                    csvResultsContainer.classList.remove('hidden');
-                    predictionResult.classList.add('hidden');
-                } catch (error) {
-                    console.error('Error:', error);
-                    predictionResult.textContent = `There was a problem processing the CSV file. Please ensure the backend is running at ${backendEndpoint}.`;
-                    predictionResult.classList.add('bg-red-100', 'text-red-800');
-                }
-            });
-
-            function displayCsvResults(predictions) {
-                csvResultsTable.classList.remove('hidden');
-                let html = `<div class="overflow-x-auto rounded-lg shadow-md">
-                                <table class="min-w-full table-auto divide-y divide-gray-200">
-                                    <thead class="bg-gray-200">
-                                        <tr>`;
-                
-                if (predictions.length > 0) {
-                    const headers = Object.keys(predictions[0]);
-                    headers.forEach(header => {
-                        html += `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">${header}</th>`;
-                    });
-                }
-                html += `</tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">`;
-
-                predictions.forEach(row => {
-                    html += `<tr>`;
-                    Object.values(row).forEach(value => {
-                        html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${value}</td>`;
-                    });
-                    html += `</tr>`;
-                });
-
-                html += `</tbody></table></div>`;
-                csvResultsTable.innerHTML = html;
-            }
-            
-            // Theme Toggle Functionality
-            const themeToggle = document.getElementById('themeToggle');
-            const sunIcon = document.getElementById('sunIcon');
-            const moonIcon = document.getElementById('moonIcon');
-            const body = document.body;
-
-            // Check for saved theme preference or default to light mode
-            const currentTheme = localStorage.getItem('theme') || 'light';
-            if (currentTheme === 'dark') {
-                body.classList.add('dark-mode');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            }
-
-            themeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-                
-                if (body.classList.contains('dark-mode')) {
-                    localStorage.setItem('theme', 'dark');
-                    sunIcon.classList.add('hidden');
-                    moonIcon.classList.remove('hidden');
+        for (const key of numericKeys) {
+            if (newData[key] !== undefined) {
+                if (key.includes("Score") || key.includes("Volatility") || key.includes("Rating")) {
+                    newData[key] = parseFloat(newData[key]);
                 } else {
-                    localStorage.setItem('theme', 'light');
-                    sunIcon.classList.remove('hidden');
-                    moonIcon.classList.add('hidden');
+                    newData[key] = parseInt(newData[key], 10);
                 }
-            });
+            }
+        }
+        return newData;
+    }
+
+    // Main logic for form submission (restored)
+    const form = document.getElementById('loan-form');
+    const predictionResult = document.getElementById('prediction-result');
+    const metricsSection = document.getElementById('metrics-section');
+    const metricsData = document.getElementById('metrics-data');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
         });
+
+        const processedData = convertToNumbers(data);
+        const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict';
+        
+        predictionResult.classList.remove('hidden');
+        predictionResult.textContent = 'Checking eligibility...';
+        predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+        
+        try {
+            const response = await fetch(backendEndpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(processedData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            displayMetrics(result.metrics);
+
+            const predictionValue = (result && result.prediction) ? String(result.prediction).toLowerCase() : '';
+            predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+            
+            if (predictionValue === 'eligible') {
+                predictionResult.textContent = '🥳 Congratulations! You are eligible for a loan.';
+                predictionResult.classList.add('bg-green-100', 'text-green-800');
+            } else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
+                predictionResult.textContent = "😔 We're sorry, you are not eligible for a loan at this time.";
+                predictionResult.classList.add('bg-red-100', 'text-red-800');
+            } else {
+                predictionResult.textContent = 'Received a response from the backend, but no prediction was found.';
+                predictionResult.classList.add('bg-red-100', 'text-red-800');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            predictionResult.textContent = `There was a problem checking your eligibility. Please ensure the backend is running at ${backendEndpoint}.`;
+            predictionResult.classList.add('bg-red-100', 'text-red-800');
+        }
+    });
+
+    // Main logic for CSV submission (restored)
+    const csvForm = document.getElementById('csv-form');
+    const csvResultsContainer = document.getElementById('csv-results-container');
+    const csvResultsTable = document.getElementById('csv-results-table');
+    const fairnessSection = document.getElementById('fairness-section');
+
+    csvForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        predictionResult.classList.remove('hidden');
+        predictionResult.innerHTML = 'Processing CSV file...';
+        predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+        csvResultsContainer.classList.add('hidden');
+        
+        const csvFile = document.getElementById('csvFile').files[0];
+        if (!csvFile) {
+            predictionResult.textContent = 'Please select a CSV file to upload.';
+            predictionResult.classList.add('bg-red-100', 'text-red-800');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', csvFile);
+        const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict_csv'; 
+
+        try {
+            const response = await fetch(backendEndpoint, {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            displayMetrics(result.metrics);
+            displayFairnessMetrics(result.fairness_metrics, result.fairness_observation);
+            displayCsvResults(result.predictions);
+            
+            csvResultsContainer.classList.remove('hidden');
+            predictionResult.classList.add('hidden');
+        } catch (error) {
+            console.error('Error:', error);
+            predictionResult.textContent = `There was a problem processing the CSV file. Please ensure the backend is running at ${backendEndpoint}.`;
+            predictionResult.classList.add('bg-red-100', 'text-red-800');
+        }
+    });
+
+    function displayCsvResults(predictions) {
+        csvResultsTable.classList.remove('hidden');
+        let html = `<div class="overflow-x-auto rounded-lg shadow-md">
+                        <table class="min-w-full table-auto divide-y divide-gray-200">
+                            <thead class="bg-gray-200">
+                                <tr>`;
+        
+        if (predictions.length > 0) {
+            const headers = Object.keys(predictions[0]);
+            headers.forEach(header => {
+                html += `<th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">${header}</th>`;
+            });
+        }
+        html += `</tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">`;
+
+        predictions.forEach(row => {
+            html += `<tr>`;
+            Object.values(row).forEach(value => {
+                html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${value}</td>`;
+            });
+            html += `</tr>`;
+        });
+
+        html += `</tbody></table></div>`;
+        csvResultsTable.innerHTML = html;
+    }
+    
+    // Modal Logic 
+    const guidelinesModal = document.getElementById('guidelinesModal');
+    const showGuidelinesButton = document.getElementById('showGuidelinesButton');
+    const closeGuidelinesModal = document.getElementById('closeGuidelinesModal');
+
+    // Open Modal
+    showGuidelinesButton.addEventListener('click', () => {
+        guidelinesModal.style.display = 'flex';
+    });
+
+    // Close Modal on X click
+    closeGuidelinesModal.addEventListener('click', () => {
+        guidelinesModal.style.display = 'none';
+    });
+
+    // Close Modal on backdrop click
+    guidelinesModal.addEventListener('click', (e) => {
+        if (e.target === guidelinesModal) {
+            guidelinesModal.style.display = 'none';
+        }
+    });
     </script>
 </body>
-
 </html>
