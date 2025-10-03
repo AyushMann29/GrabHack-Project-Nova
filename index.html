@@ -116,7 +116,7 @@
                 Nova: Loan Eligibility Checker
             </h1>
             <p class="text-gray-600 mt-3 text-lg">Enter your data to check your loan eligibility.</p>
-            <p class="text-sm text-gray-400">Powered by Grab</p>
+            <p class="text-sm text-gray-400">Powered by <a href="https://www.grab.com/sg/" target="_blank" class="text-blue-500 hover:underline">Grab</a></p>
             <p class="text-xs text-red-400 mt-2">⚠️ Backend may take a few minutes to wake up</p>
             
             <!-- Blog Link -->
@@ -523,28 +523,22 @@
                     displayMetrics(result.metrics);
 
                     const predictionValue = (result && result.prediction) ? String(result.prediction).toLowerCase() : '';
-predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
-
-if (predictionValue === 'eligible') {
-    // For Eligible: Uses a larger emoji and bold text.
-    predictionResult.innerHTML = `<span style="font-size: 2rem;">🥳</span> <strong>Congratulations!</strong> You are eligible for a loan.`;
-    predictionResult.classList.add('bg-green-100', 'text-green-800');
-} else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
-    // For Not Eligible: Uses a larger emoji and bold text with a different background color.
-    predictionResult.innerHTML = `<span style="font-size: 2rem;">😔</span> <strong>We're sorry,</strong> you are not eligible for a loan at this time.`;
-    predictionResult.classList.add('bg-red-200', 'text-red-800');
-} else {
-    // For other cases: Uses a larger emoji and bold text for clarity.
-    predictionResult.innerHTML = `<span style="font-size: 2rem;">🤔</span> <strong>Received a response from the backend,</strong> but no prediction was found.`;
-    predictionResult.classList.add('bg-red-200', 'text-red-800');
-}
-
-} catch (error) {
-    console.error('Error:', error);
-    // For errors: Uses a large emoji and bold text.
-    predictionResult.innerHTML = `<span style="font-size: 2rem;">😬</span> <strong>There was a problem checking your eligibility.</strong> Please ensure the backend is running at ${backendEndpoint}.`;
-    predictionResult.classList.add('bg-red-200', 'text-red-800');
-}
+                    predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
+                    if (predictionValue === 'eligible') {
+                        predictionResult.textContent = '🥳 Congratulations! You are eligible for a loan.';
+                        predictionResult.classList.add('bg-green-100', 'text-green-800');
+                    } else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
+                        predictionResult.textContent = "😔 We're sorry, you are not eligible for a loan at this time.";
+                        predictionResult.classList.add('bg-red-100', 'text-red-800');
+                    } else {
+                        predictionResult.textContent = 'Received a response from the backend, but no prediction was found.';
+                        predictionResult.classList.add('bg-red-100', 'text-red-800');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    predictionResult.textContent = `There was a problem checking your eligibility. Please ensure the backend is running at ${backendEndpoint}.`;
+                    predictionResult.classList.add('bg-red-100', 'text-red-800');
+                }
             });
 
             csvForm.addEventListener('submit', async (e) => {
