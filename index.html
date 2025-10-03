@@ -67,6 +67,30 @@
         .dark-mode .shadow-md {
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
         }
+        /* Styling for the Guidelines Button */
+        .guidelines-button {
+            position: fixed;
+            top: 20px;
+            left: 20px; /* Positioned on the top left */
+            z-index: 1000;
+            background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+            border: none;
+            border-radius: 9999px; 
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .guidelines-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
         .theme-toggle {
             position: fixed;
             top: 20px;
@@ -93,9 +117,58 @@
             height: 24px;
             color: white;
         }
+        /* Modal Styles - CRITICAL FIXES APPLIED HERE */
+        .modal-backdrop {
+            position: fixed; /* Ensures it covers the viewport */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Covers entire viewport width */
+            height: 100vh; /* Covers entire viewport height */
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1050;
+            display: none; /* START HIDDEN, JAVASCRIPT WILL SET TO FLEX */
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto; /* Allows scrolling if content is too long */
+        }
+        .modal-content {
+            background-color: white;
+            /* Removed margin: 10vh auto; since flex handles centering */
+            padding: 40px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            color: #333;
+            /* Ensures it stays within the viewport on small screens */
+            max-height: 90vh; 
+            overflow-y: auto;
+        }
+        .dark-mode .modal-content {
+            background-color: #1a1a2e;
+            color: #eee;
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-button:hover {
+            color: #666;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6">
+     <!-- Guidelines Button: Now triggers the modal -->
+    <button id="showGuidelinesButton" class="guidelines-button">
+        Guidelines
+    </button>
     <!-- Theme Toggle Button -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
         <svg id="sunIcon" fill="currentColor" viewBox="0 0 20 20">
@@ -105,6 +178,39 @@
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
     </button>
+    <!-- Modal Backdrop and Content -->
+    <div id="guidelinesModal" class="modal-backdrop">
+        <div class="modal-content">
+            <span class="close-button" id="closeGuidelinesModal">&times;</span>
+            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Loan Eligibility Guide</h2>
+            <p class="mb-4 text-lg">This tool uses a machine learning model to estimate your loan eligibility based on the following criteria. Please read the guidelines carefully to understand how your data is evaluated.</p>
+            
+            <div class="space-y-4">
+                <h3 class="text-xl font-semibold border-b pb-1 dark:border-gray-700">1. Data Entry Requirements</h3>
+                <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700 dark:text-gray-400">
+                    <li>All fields are **mandatory**. Ensure no field is left blank.</li>
+                    <li>**Earnings (Value):** Must be a positive numerical figure (e.g., total monthly income/revenue).</li>
+                    <li>**Performance Rating (Avg):** Must be between 1.0 and 5.0.</li>
+                    <li>**Financial Activity (Score):** Must be a value between 0.0 and 1.0.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold border-b pb-1 dark:border-gray-700">2. Key Eligibility Factors</h3>
+                <p class="text-gray-700 dark:text-gray-400">The model places significant weight on the stability and history of your activity:</p>
+                <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700 dark:text-gray-400">
+                    <li>**Time on Platform:** Longer time indicates a more reliable history and generally increases eligibility.</li>
+                    <li>**Earnings Stability:** "Stable" earnings are favored over "Variable" or "Seasonal" earnings.</li>
+                    <li>**On-Time Loan Repayments:** A high number of on-time repayments is crucial for a positive result.</li>
+                </ul>
+
+                <h3 class="text-xl font-semibold border-b pb-1 dark:border-gray-700">3. Understanding the Results</h3>
+                <p class="text-gray-700 dark:text-gray-400">The model outputs one of two possible predictions:</p>
+                <ul class="list-disc list-inside ml-4 space-y-2 text-gray-700 dark:text-gray-400">
+                    <li>**Eligible (🥳):** The model predicts a high probability of successful loan repayment.</li>
+                    <li>**Not Eligible (😔):** The model indicates that based on the current data, the risk profile does not meet the minimum lending criteria.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
         
     </style>
 </head>
@@ -643,6 +749,33 @@
                 }
             });
         });
+
+        // ... (Your code for displayCsvResults function ends here)
+
+    // ... existing code above ...
+    
+    // Modal Logic 
+    // Move element definitions to the top of the script block for best practice
+    const guidelinesModal = document.getElementById('guidelinesModal');
+    const showGuidelinesButton = document.getElementById('showGuidelinesButton');
+    const closeGuidelinesModal = document.getElementById('closeGuidelinesModal');
+
+    // Open Modal
+    showGuidelinesButton.addEventListener('click', () => {
+        guidelinesModal.style.display = 'flex';
+    });
+
+    // Close Modal on X click (FIXED TYPO HERE)
+    closeGuidelinesModal.addEventListener('click', () => {
+        guidelinesModal.style.display = 'none'; // Corrected from guidlinesModal to guidelinesModal
+    });
+
+    // Close Modal on backdrop click
+    guidelinesModal.addEventListener('click', (e) => {
+        if (e.target === guidelinesModal) {
+            guidelinesModal.style.display = 'none';
+        }
+    });
     </script>
 </body>
 
