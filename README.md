@@ -324,4 +324,23 @@ Thanks to all our amazing contributors for their support and code!
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+---
+
+## Design / UI helpers
+
+We added a small global stylesheet to improve visual consistency and make it easier for contributors to build UI quickly. The stylesheet lives at `static/styles.css` and provides a set of lightweight utility classes on top of Tailwind.
+
+Key classes introduced:
+
+- `card` / `card-lg` — Rounded, elevated container for sections and panels.
+- `btn`, `btn-primary`, `btn-ghost` — Reusable button styles (primary uses a subtle gradient).
+- `form-control` — Styled input/select/textarea for consistent spacing and borders.
+- `form-grid` — Responsive two-column form grid on wider screens.
+- `field-card` — Small card style for individual form fields with hover lift.
+- `badge-positive` / `badge-negative` — Result badges for prediction outputs.
+
+Colors & tokens are defined in CSS variables in `static/styles.css` (for easy tweaking). If you plan to productionize the frontend with Flask (or other frameworks), keep static assets under the `static/` folder and reference them from templates as usual.
+
+If you'd like, I can move more UI helpers into separate partials or document additional component usage examples.
+
 

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project Nova - A Door to Opportunity</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="static/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -46,16 +47,16 @@
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
         }
     </style>
-</head>
-<body class="bg-slate-50 text-slate-800 overflow-y-scroll">
+    </head>
+    <body class="bg-slate-50 text-slate-800 overflow-y-scroll">
 
     <!-- Header Section -->
-    <header class="relative text-white overflow-hidden">
+    <header class="hero relative text-white overflow-hidden">
         <div class="absolute inset-0">
             <img src="https://placehold.co/1920x1080/1a202c/ffffff?text=." alt="Abstract background" class="w-full h-full object-cover">
             <div class="absolute inset-0 hero-gradient opacity-90"></div>
         </div>
-        <div class="relative max-w-4xl mx-auto py-20 px-6 sm:px-8 lg:px-12 text-center">
+        <div class="relative container py-20 text-center">
             <div class="mb-4">
                 <svg class="w-20 h-20 mx-auto icon-glow" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -64,12 +65,12 @@
                 </svg>
             </div>
             <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 text-shadow-lg">Nova</h1>
-            <p class="text-xl md:text-2xl font-medium text-slate-200">More Than Code, It's a Door to Opportunity</p>
+            <p class="text-xl md:text-2xl font-medium sub">More Than Code, It's a Door to Opportunity</p>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-4xl mx-auto p-6 sm:p-8 lg:p-12">
+    <main class="container">
         
         <!-- Introduction Section -->
         <article class="prose prose-lg max-w-none text-slate-700 space-y-8">
@@ -77,7 +78,7 @@
                 We've all felt that knot in our stomach. The one that comes from waiting. Waiting for a test result, waiting for a job offer, or waiting for a decision that could change our future. For millions of small business owners and independent workers, that feeling is a constant companion when they apply for a loan.
             </p>
 
-            <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+            <div class="card">
                 <p>
                     Imagine Ravi, a ride-share driver in a bustling city. He works ten hours a day, his income is steady, but it doesn't fit into the neat little box of a monthly paycheck. He dreams of owning his own, more fuel-efficient car, which would mean more money in his pocket for his family. But every time he approaches a traditional lender, he hits a wall.
                 </p>
@@ -101,8 +102,8 @@
             </div>
             
             <!-- New Section: Powerfully Simple -->
-            <div class="pt-8">
-                <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                <div class="pt-8">
+                <div class="card">
                     <h3 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center">
                         <svg class="w-6 h-6 mr-3 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                         Powerfully Simple: The Magic of a CSV File
@@ -110,7 +111,7 @@
                     <p class="mt-4">
                         What if you need to check hundreds of applicants at once? Nova handles this with something everyone knows: a spreadsheet. You can upload a simple CSV file with all your applicants' data, and Nova gets to work, analyzing each one and giving you a complete report in seconds.
                     </p>
-                    <div class="mt-4 bg-slate-100 p-4 rounded-lg border border-slate-200 text-sm">
+                    <div class="mt-4 card" style="background:var(--bg-2);border:none;padding:12px">
                         <p><strong class="font-semibold text-slate-800">Under the Hood:</strong> Behind this simplicity is a robust <code class="text-indigo-600 font-mono font-medium">Flask API</code> that processes the file, feeding each entry into our trained <code class="text-indigo-600 font-mono font-medium">XGBoost</code> machine learning model for an instant, fair assessment. It’s enterprise-level power with spreadsheet-level ease.</p>
                     </div>
                 </div>
