@@ -9,6 +9,38 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
+         @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* ADDED: CSS to enable shimmer effect on hover */
+    .shimmer-on-hover {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .shimmer-on-hover::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.1),
+            rgba(255, 255, 255, 0.4),
+            rgba(255, 255, 255, 0.1)
+        );
+        transform: translateX(-100%);
+        transition: transform 0.8s;
+    }
+
+    .shimmer-on-hover:hover::after {
+        transform: translateX(100%);
+    }
         html, body {
             height: 100%;
             margin: 0;
@@ -116,9 +148,9 @@
                 </div>
             </div>
 
-            <div class="my-8 rounded-xl overflow-hidden shadow-lg">
-                <img src="https://placehold.co/1200x600/6366f1/ffffff?text=Empowering+Entrepreneurs" alt="A diverse group of empowered small business owners" class="w-full h-full object-cover">
-            </div>
+           <div class="my-8 rounded-xl overflow-hidden shadow-lg relative shimmer-on-hover">
+    <img src="https://placehold.co/1200x600/6366f1/ffffff?text=Empowering+Entrepreneurs" alt="A diverse group of empowered small business owners" class="w-full h-full object-cover">
+</div>
 
             <!-- Foundation of Trust Section -->
             <div class="pt-8">
