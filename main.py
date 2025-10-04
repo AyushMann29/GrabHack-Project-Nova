@@ -9,6 +9,9 @@ from xgboost import XGBClassifier
 from sklearn.metrics import precision_score, recall_score, f1_score
 from io import StringIO
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 # ===============================================================================
 # Input Validation Functions
@@ -310,6 +313,55 @@ def predict_csv():
             return jsonify({'error': f"Error processing file: {str(e)}"}), 500
 
     return jsonify({'error': 'An unknown error occurred.'}), 500
+
+@app.route('/feedback', methods=['POST'])
+def feedback():
+    """
+    Endpoint to receive user feedback and send an email.
+    """
+    try:
+        EMAIL_FROM = os.environ.get("EMAIL_FROM")
+        EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+        EMAIL_TO = os.environ.get("EMAIL_TO")
+        SMTP_SERVER = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
+        SMTP_PORT = int(os.environ.get("SMTP_PORT", 587))
+
+        data = request.json or {}
+        name = data.get('name', 'Anonymous')
+        email = data.get('email', 'No email provided')
+        rating = data.get('rating', 'No rating provided')
+        message = data.get('message', 'No message provided')
+
+        # Compose email
+        subject = f"New Feedback from {name}"
+        body = f"""
+        You have received new feedback:
+
+        Name: {name}
+        Email: {email}
+        Rating: {rating}
+        Message: {message}
+        """
+
+        msg = MIMEMultipart()
+        msg['From'] = EMAIL_FROM
+        msg['To'] = EMAIL_TO
+        msg['Subject'] = subject
+        msg.attach(MIMEText(body, 'plain'))
+
+        # Send via SMTP
+        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
+            server.starttls()
+            server.login(EMAIL_FROM, EMAIL_PASSWORD)
+            server.send_message(msg)
+
+        return jsonify({"message": "Feedback sent successfully!"}), 200
+    
+    except Exception as e:
+        import traceback
+        print("Error sending feedback email:", e)
+        traceback.print_exc()
+        return jsonify({"error": "Failed to send feedback"}), 500
 
 
 # ==============================================================================
