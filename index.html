@@ -6,9 +6,13 @@
     <title>Nova: Loan Eligibility Checker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="static/styles.css">
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         .table-auto {
@@ -390,65 +394,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-    // Dark Mode Toggle
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const body = document.body;
-
-        // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            body.classList.add('dark-mode');
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                localStorage.setItem('theme', 'light');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        });
-    });
-
-    // Dark Mode Toggle
-    document.addEventListener('DOMContentLoaded', () => {
-        const themeToggle = document.getElementById('themeToggle');
-        const sunIcon = document.getElementById('sunIcon');
-        const moonIcon = document.getElementById('moonIcon');
-        const body = document.body;
-
-        // Check for saved theme preference or default to light mode
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        if (currentTheme === 'dark') {
-            body.classList.add('dark-mode');
-            sunIcon.classList.add('hidden');
-            moonIcon.classList.remove('hidden');
-        }
-
-        themeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('theme', 'dark');
-                sunIcon.classList.add('hidden');
-                moonIcon.classList.remove('hidden');
-            } else {
-                localStorage.setItem('theme', 'light');
-                sunIcon.classList.remove('hidden');
-                moonIcon.classList.add('hidden');
-            }
-        });
-    });
+    // Removed duplicate early theme initialization - consolidated later in the main script
 
  
     function displayFairnessMetrics(fairnessMetrics, fairnessObservation) {
@@ -520,8 +466,6 @@
                 singleEntryForm.classList.remove('hidden');
                 csvUploadForm.classList.add('hidden');
                 predictionResult.classList.add('hidden');
-                csvResultsContainer.classList.add('hidden');
-                fairnessSection.classList.add('hidden');
                 csvResultsContainer.classList.add('hidden');
                 fairnessSection.classList.add('hidden');
             });
@@ -651,7 +595,6 @@
                 predictionResult.innerHTML = 'Processing CSV file...';
                 predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
                 csvResultsContainer.classList.add('hidden');
-                csvResultsContainer.classList.add('hidden');
                 
                 const csvFile = document.getElementById('csvFile').files[0];
                 if (!csvFile) {
@@ -680,7 +623,6 @@
                     displayFairnessMetrics(result.fairness_metrics, result.fairness_observation);
                     displayCsvResults(result.predictions);
                     
-                    csvResultsContainer.classList.remove('hidden');
                     csvResultsContainer.classList.remove('hidden');
                     predictionResult.classList.add('hidden');
                 } catch (error) {
@@ -763,9 +705,9 @@
         guidelinesModal.style.display = 'flex';
     });
 
-    // Close Modal on X click (FIXED TYPO HERE)
+    // Close Modal on X click
     closeGuidelinesModal.addEventListener('click', () => {
-        guidelinesModal.style.display = 'none'; // Corrected from guidlinesModal to guidelinesModal
+        guidelinesModal.style.display = 'none';
     });
 
     // Close Modal on backdrop click
@@ -775,8 +717,6 @@
         }
     });
     </script>
-    </div>
-    </div>
 </body>
 
 </html>
