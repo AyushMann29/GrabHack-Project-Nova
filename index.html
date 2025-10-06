@@ -166,27 +166,43 @@
         .close-button:hover {
             color: #666;
         }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-only {
+                display: block !important;
+            }
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .bg-gradient-to-br {
+                background: white !important;
+            }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6">
-     <!-- Guidelines Button: Now triggers the modal -->
-    <button id="showGuidelinesButton" class="guidelines-button">
+    <!-- Guidelines Button: Now triggers the modal -->
+    <button id="showGuidelinesButton" class="guidelines-button" aria-label="Show loan eligibility guidelines">
         Guidelines
     </button>
     <!-- Theme Toggle Button -->
     <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
-        <svg id="sunIcon" fill="currentColor" viewBox="0 0 20 20">
+        <svg id="sunIcon" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
             <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
         </svg>
-        <svg id="moonIcon" class="hidden" fill="currentColor" viewBox="0 0 20 20">
+        <svg id="moonIcon" class="hidden" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
             <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
         </svg>
     </button>
     <!-- Modal Backdrop and Content -->
-    <div id="guidelinesModal" class="modal-backdrop">
+    <div id="guidelinesModal" class="modal-backdrop" role="dialog" aria-labelledby="modal-title" aria-modal="true">
         <div class="modal-content">
-            <span class="close-button" id="closeGuidelinesModal">&times;</span>
-            <h2 class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Loan Eligibility Guide</h2>
+            <span class="close-button" id="closeGuidelinesModal" aria-label="Close guidelines modal">&times;</span>
+            <h2 id="modal-title" class="text-3xl font-bold mb-4 text-blue-600 dark:text-blue-400">Loan Eligibility Guide</h2>
             <p class="mb-4 text-lg">This tool uses a machine learning model to estimate your loan eligibility based on the following criteria. Please read the guidelines carefully to understand how your data is evaluated.</p>
             
             <div class="space-y-4">
@@ -328,6 +344,26 @@
         <!-- Single Entry Form -->
         <section id="single-entry-form" class="space-y-8">
             <h2 class="text-2xl font-bold text-gray-700 mb-6 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Your Information</h2>
+            
+            <!-- Progress Indicator -->
+            <div class="bg-white p-4 rounded-xl border border-gray-200 mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-700">Form Progress</span>
+                    <div class="flex items-center space-x-3">
+                        <button id="save-draft" type="button" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-3 py-1 rounded-md transition-colors duration-200">
+                            Save Draft
+                        </button>
+                        <button id="load-draft" type="button" class="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-3 py-1 rounded-md transition-colors duration-200">
+                            Load Draft
+                        </button>
+                        <span id="progress-text" class="text-sm text-gray-500">0/10 fields completed</span>
+                    </div>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+            
             <form id="loan-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Partner Type -->
@@ -357,8 +393,10 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </span>
-                        <input type="number" id="earningsValue" name="Earnings (Value)" required min="0"
-                            class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-all duration-200">
+                        <input type="number" id="earningsValue" name="Earnings (Value)" required min="0" max="100000"
+                            class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-all duration-200"
+                            aria-describedby="earningsValue-help">
+                        <div id="earningsValue-help" class="mt-1 text-xs text-gray-500">Enter your monthly earnings (0 - 100,000)</div>
                     </div>
                 </div>
 
@@ -391,7 +429,9 @@
                             </svg>
                         </span>
                         <input type="number" id="perfRating" name="Perf. Rating (Avg)" required min="1" max="5" step="0.1"
-                            class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-all duration-200">
+                            class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-all duration-200"
+                            aria-describedby="perfRating-help">
+                        <div id="perfRating-help" class="mt-1 text-xs text-gray-500">Rate from 1.0 to 5.0 (e.g., 4.8)</div>
                     </div>
                 </div>
 
@@ -432,8 +472,10 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                         </span>
-                        <input type="number" id="financialActivity" name="Financial Activity (Score)" required min="0" max="1" step="0.1"
-                            class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-all duration-200">
+                        <input type="number" id="financialActivity" name="Financial Activity (Score)" required min="0" max="1" step="0.01"
+                            class="block w-full pl-10 rounded-lg border-gray-300 shadow-sm p-3 focus:border-blue-500 focus:ring-blue-500 hover:border-blue-400 transition-all duration-200"
+                            aria-describedby="financialActivity-help">
+                        <div id="financialActivity-help" class="mt-1 text-xs text-gray-500">Score between 0.0 and 1.0 (e.g., 0.9)</div>
                     </div>
                 </div>
 
@@ -799,6 +841,12 @@
             const csvResultsTable = document.getElementById('csv-results-table');
             const fairnessSection = document.getElementById('fairness-section');
 
+            // Progress tracking
+            setupProgressTracking();
+            
+            // Save/Load draft functionality
+            setupDraftFeature();
+
             tabSingle.addEventListener('click', () => {
                 tabSingle.classList.remove('bg-gray-100', 'text-gray-600');
                 tabSingle.classList.add('bg-blue-600', 'text-white');
@@ -906,8 +954,228 @@
                 return newData;
             }
 
+            function validateForm() {
+                const errors = [];
+                
+                // Get form values
+                const earnings = parseFloat(document.getElementById('earningsValue').value);
+                const rating = parseFloat(document.getElementById('perfRating').value);
+                const months = parseInt(document.getElementById('timeOnPlatform').value);
+                const volume = parseInt(document.getElementById('volume').value);
+                const financialScore = parseFloat(document.getElementById('financialActivity').value);
+                const volatility = parseFloat(document.getElementById('earningsVolatility').value);
+                const repayments = parseInt(document.getElementById('repayments').value);
+                const anomaly = parseFloat(document.getElementById('anomalyScore').value);
+                
+                // Validation rules
+                if (earnings < 0 || earnings > 100000) {
+                    errors.push('Earnings must be between 0 and 100,000');
+                }
+                if (rating < 1 || rating > 5) {
+                    errors.push('Performance Rating must be between 1.0 and 5.0');
+                }
+                if (months < 1) {
+                    errors.push('Time on Platform must be at least 1 month');
+                }
+                if (volume < 1) {
+                    errors.push('Order/Trip Volume must be at least 1');
+                }
+                if (financialScore < 0 || financialScore > 1) {
+                    errors.push('Financial Activity Score must be between 0.0 and 1.0');
+                }
+                if (volatility < 0) {
+                    errors.push('Earnings Volatility cannot be negative');
+                }
+                if (repayments < 0) {
+                    errors.push('On-Time Loan Repayments cannot be negative');
+                }
+                if (anomaly < 0 || anomaly > 1) {
+                    errors.push('Operational Anomaly Score must be between 0.0 and 1.0');
+                }
+                
+                if (errors.length > 0) {
+                    showValidationErrors(errors);
+                    return false;
+                }
+                return true;
+            }
+
+            function showValidationErrors(errors) {
+                const errorDiv = document.getElementById('validation-errors') || createErrorDiv();
+                errorDiv.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                        <div class="flex">
+                            <svg class="w-5 h-5 text-red-400 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                            <div>
+                                <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
+                                <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+                                    ${errors.map(error => `<li>${error}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+
+            function createErrorDiv() {
+                const errorDiv = document.createElement('div');
+                errorDiv.id = 'validation-errors';
+                const form = document.getElementById('loan-form');
+                form.parentNode.insertBefore(errorDiv, form);
+                return errorDiv;
+            }
+
+            function clearValidationErrors() {
+                const errorDiv = document.getElementById('validation-errors');
+                if (errorDiv) {
+                    errorDiv.innerHTML = '';
+                }
+            }
+
+            function showLoadingState() {
+                const submitBtn = document.querySelector('#loan-form button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Checking...
+                `;
+            }
+
+            function hideLoadingState() {
+                const submitBtn = document.querySelector('#loan-form button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Check Eligibility
+                `;
+            }
+
+            function setupProgressTracking() {
+                const formInputs = document.querySelectorAll('#loan-form input, #loan-form select');
+                const progressBar = document.getElementById('progress-bar');
+                const progressText = document.getElementById('progress-text');
+                const totalFields = formInputs.length;
+
+                function updateProgress() {
+                    let completedFields = 0;
+                    formInputs.forEach(input => {
+                        if (input.value.trim() !== '') {
+                            completedFields++;
+                        }
+                    });
+                    
+                    const percentage = (completedFields / totalFields) * 100;
+                    progressBar.style.width = `${percentage}%`;
+                    progressText.textContent = `${completedFields}/${totalFields} fields completed`;
+                    
+                    // Change color based on completion
+                    if (percentage === 100) {
+                        progressBar.classList.remove('from-blue-500', 'to-indigo-500');
+                        progressBar.classList.add('from-green-500', 'to-emerald-500');
+                    } else {
+                        progressBar.classList.remove('from-green-500', 'to-emerald-500');
+                        progressBar.classList.add('from-blue-500', 'to-indigo-500');
+                    }
+                }
+
+                formInputs.forEach(input => {
+                    input.addEventListener('input', updateProgress);
+                    input.addEventListener('change', updateProgress);
+                });
+
+                // Initial update
+                updateProgress();
+            }
+
+            function setupDraftFeature() {
+                const saveBtn = document.getElementById('save-draft');
+                const loadBtn = document.getElementById('load-draft');
+                const formInputs = document.querySelectorAll('#loan-form input, #loan-form select');
+
+                saveBtn.addEventListener('click', () => {
+                    const formData = {};
+                    formInputs.forEach(input => {
+                        if (input.value.trim() !== '') {
+                            formData[input.id] = input.value;
+                        }
+                    });
+                    
+                    if (Object.keys(formData).length > 0) {
+                        localStorage.setItem('loanFormDraft', JSON.stringify(formData));
+                        showNotification('Draft saved successfully!', 'success');
+                    } else {
+                        showNotification('No data to save', 'warning');
+                    }
+                });
+
+                loadBtn.addEventListener('click', () => {
+                    const savedDraft = localStorage.getItem('loanFormDraft');
+                    if (savedDraft) {
+                        const formData = JSON.parse(savedDraft);
+                        Object.entries(formData).forEach(([fieldId, value]) => {
+                            const field = document.getElementById(fieldId);
+                            if (field) {
+                                field.value = value;
+                                field.dispatchEvent(new Event('input', { bubbles: true }));
+                            }
+                        });
+                        showNotification('Draft loaded successfully!', 'success');
+                    } else {
+                        showNotification('No saved draft found', 'info');
+                    }
+                });
+            }
+
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white font-medium transition-all duration-300 transform translate-x-full`;
+                
+                switch (type) {
+                    case 'success':
+                        notification.classList.add('bg-green-500');
+                        break;
+                    case 'warning':
+                        notification.classList.add('bg-yellow-500');
+                        break;
+                    case 'error':
+                        notification.classList.add('bg-red-500');
+                        break;
+                    default:
+                        notification.classList.add('bg-blue-500');
+                }
+                
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.classList.remove('translate-x-full');
+                }, 100);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                
+                // Enhanced form validation
+                if (!validateForm()) {
+                    return;
+                }
                 
                 const formData = new FormData(form);
                 const data = {};
@@ -918,6 +1186,13 @@
                 const processedData = convertToNumbers(data);
 
                 const backendEndpoint = 'https://grabhack-project-nova.onrender.com/predict';
+                
+                // Clear previous validation errors
+                clearValidationErrors();
+                
+                // Show loading state
+                showLoadingState();
+                
                 predictionResult.classList.remove('hidden');
                 predictionResult.innerHTML = `
                     <div class="flex items-center justify-center p-6">
@@ -949,10 +1224,40 @@
                     const predictionValue = (result && result.prediction) ? String(result.prediction).toLowerCase() : '';
                     predictionResult.classList.remove('bg-green-100', 'bg-red-100', 'text-green-800', 'text-red-800');
                     if (predictionValue === 'eligible') {
-                        predictionResult.textContent = '🥳 Congratulations! You are eligible for a loan.';
+                        predictionResult.innerHTML = `
+                            <div class="text-center">
+                                <div class="text-6xl mb-4">🥳</div>
+                                <h3 class="text-2xl font-bold text-green-800 mb-2">Congratulations!</h3>
+                                <p class="text-lg text-green-700">You are eligible for a loan.</p>
+                                <div class="mt-4 text-sm text-green-600">
+                                    <p>Next steps: A loan officer will contact you within 2-3 business days.</p>
+                                </div>
+                                <button onclick="window.print()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm no-print">
+                                    Print Result
+                                </button>
+                                <div class="print-only hidden mt-4 text-xs text-gray-600">
+                                    <p>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                                </div>
+                            </div>
+                        `;
                         predictionResult.classList.add('bg-green-100', 'text-green-800');
                     } else if (predictionValue === 'not eligible' || predictionValue === 'ineligible') {
-                        predictionResult.textContent = "😔 We're sorry, you are not eligible for a loan at this time.";
+                        predictionResult.innerHTML = `
+                            <div class="text-center">
+                                <div class="text-6xl mb-4">😔</div>
+                                <h3 class="text-2xl font-bold text-red-800 mb-2">Not Eligible</h3>
+                                <p class="text-lg text-red-700">You are not eligible for a loan at this time.</p>
+                                <div class="mt-4 text-sm text-red-600">
+                                    <p>Consider improving your performance rating or increasing your time on platform.</p>
+                                </div>
+                                <button onclick="window.print()" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm no-print">
+                                    Print Result
+                                </button>
+                                <div class="print-only hidden mt-4 text-xs text-gray-600">
+                                    <p>Generated on: ${new Date().toLocaleDateString()} at ${new Date().toLocaleTimeString()}</p>
+                                </div>
+                            </div>
+                        `;
                         predictionResult.classList.add('bg-red-100', 'text-red-800');
                     } else {
                         predictionResult.textContent = 'Received a response from the backend, but no prediction was found.';
@@ -960,8 +1265,19 @@
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    predictionResult.textContent = `There was a problem checking your eligibility. Please ensure the backend is running at ${backendEndpoint}.`;
+                    predictionResult.innerHTML = `
+                        <div class="text-center">
+                            <div class="text-4xl mb-4">⚠️</div>
+                            <h3 class="text-xl font-bold text-red-800 mb-2">Connection Error</h3>
+                            <p class="text-red-700">Unable to check eligibility. Please try again later.</p>
+                            <div class="mt-4 text-sm text-red-600">
+                                <p>If the problem persists, please contact support.</p>
+                            </div>
+                        </div>
+                    `;
                     predictionResult.classList.add('bg-red-100', 'text-red-800');
+                } finally {
+                    hideLoadingState();
                 }
             });
 
@@ -1076,10 +1392,22 @@
 
             function displayCsvResults(predictions) {
                 csvResultsTable.classList.remove('hidden');
-                let html = `<div class="overflow-x-auto rounded-lg shadow-md">
-                                <table class="min-w-full table-auto divide-y divide-gray-200">
-                                    <thead class="bg-gray-200">
-                                        <tr>`;
+                
+                // Add export button
+                let html = `
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xl font-semibold text-gray-700">Prediction Results</h3>
+                        <button id="export-results" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Export CSV
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto rounded-lg shadow-md">
+                        <table class="min-w-full table-auto divide-y divide-gray-200">
+                            <thead class="bg-gray-200">
+                                <tr>`;
                 
                 if (predictions.length > 0) {
                     const headers = Object.keys(predictions[0]);
@@ -1091,8 +1419,9 @@
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">`;
 
-                predictions.forEach(row => {
-                    html += `<tr>`;
+                predictions.forEach((row, index) => {
+                    const rowClass = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
+                    html += `<tr class="${rowClass}">`;
                     Object.values(row).forEach(value => {
                         html += `<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">${value}</td>`;
                     });
@@ -1101,6 +1430,37 @@
 
                 html += `</tbody></table></div>`;
                 csvResultsTable.innerHTML = html;
+                
+                // Add export functionality
+                document.getElementById('export-results').addEventListener('click', () => {
+                    exportToCSV(predictions, 'loan_eligibility_results.csv');
+                });
+            }
+
+            function exportToCSV(data, filename) {
+                if (!data.length) return;
+                
+                const headers = Object.keys(data[0]);
+                const csvContent = [
+                    headers.join(','),
+                    ...data.map(row => headers.map(header => {
+                        const value = row[header];
+                        // Escape quotes and wrap in quotes if necessary
+                        return typeof value === 'string' && value.includes(',') 
+                            ? `"${value.replace(/"/g, '""')}"` 
+                            : value;
+                    }).join(','))
+                ].join('\n');
+                
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             }
             
             // Theme Toggle Functionality
@@ -1145,17 +1505,29 @@
     // Open Modal
     showGuidelinesButton.addEventListener('click', () => {
         guidelinesModal.style.display = 'flex';
+        // Focus management for accessibility
+        closeGuidelinesModal.focus();
     });
 
     // Close Modal on X click (FIXED TYPO HERE)
     closeGuidelinesModal.addEventListener('click', () => {
-        guidelinesModal.style.display = 'none'; // Corrected from guidlinesModal to guidelinesModal
+        guidelinesModal.style.display = 'none';
+        showGuidelinesButton.focus(); // Return focus to trigger button
     });
 
     // Close Modal on backdrop click
     guidelinesModal.addEventListener('click', (e) => {
         if (e.target === guidelinesModal) {
             guidelinesModal.style.display = 'none';
+            showGuidelinesButton.focus();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && guidelinesModal.style.display === 'flex') {
+            guidelinesModal.style.display = 'none';
+            showGuidelinesButton.focus();
         }
     });
     </script>
@@ -1189,7 +1561,7 @@
                 formData.forEach((value, key) => payload[key] = value);
 
                 try {
-                    const response = await fetch('http://localhost:5000/feedback', {
+                    const response = await fetch('https://grabhack-project-nova.onrender.com/feedback', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload),
