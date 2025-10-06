@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova: Loan Eligibility Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            scroll-behavior: smooth;
+        }
+        .table-auto {
+            table-layout: auto;
+        }
+        li {
+            padding-bottom: 5px;
+        }
+        .dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+            color: #eee;
+        }
+        .dark-mode .bg-white {
+            background-color: #16213e !important;
+        }
+        .dark-mode .text-gray-700 {
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .text-gray-600 {
+            color: #b0b0b0 !important;
+        }
+        .dark-mode .text-gray-500 {
+            color: #909090 !important;
+        }
+        .dark-mode .text-gray-400 {
+            color: #a0a0a0 !important;
+        }
+        .dark-mode .text-red-400 {
+            color: #f87171 !important;
+        }
+        .dark-mode .bg-gray-50 {
+            background-color: #0f3460 !important;
+        }
+        .dark-mode .bg-gray-100 {
+            background-color: #1a1a2e !important;
+        }
+        .dark-mode .bg-gray-200 {
+            background-color: #16213e !important;
+        }
+        .dark-mode .border-gray-200 {
+            border-color: #2d3748 !important;
+        }
+        .dark-mode .border-gray-300 {
+            border-color: #4a5568 !important;
+        }
+        .dark-mode .divide-gray-200 > * {
+            border-color: #2d3748 !important;
+        }
+        .dark-mode input, .dark-mode select {
+            background-color: #0f3460 !important;
+            color: #e0e0e0 !important;
+            border-color: #4a5568 !important;
+        }
+        .dark-mode .hover\:shadow-lg:hover {
+            box-shadow: 0 10px 15px -3px rgba(255, 255, 255, 0.1) !important;
+        }
+        .dark-mode .shadow-2xl {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+        }
+        .dark-mode .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+        }
+        /* Styling for the Guidelines Button */
+        .guidelines-button {
+            position: fixed;
+            top: 20px;
+            left: 20px; /* Positioned on the top left */
+            z-index: 1000;
+            background: linear-gradient(135deg, #4299e1 0%, #667eea 100%);
+            border: none;
+            border-radius: 9999px; 
+            padding: 10px 20px;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .guidelines-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+        /* Modal Styles - CRITICAL FIXES APPLIED HERE */
+        .modal-backdrop {
+            position: fixed; /* Ensures it covers the viewport */
+            top: 0;
+            left: 0;
+            width: 100vw; /* Covers entire viewport width */
+            height: 100vh; /* Covers entire viewport height */
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1050;
+            display: none; /* START HIDDEN, JAVASCRIPT WILL SET TO FLEX */
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto; /* Allows scrolling if content is too long */
+        }
+        .modal-content {
+            background-color: white;
+            /* Removed margin: 10vh auto; since flex handles centering */
+            padding: 40px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            color: #333;
+            /* Ensures it stays within the viewport on small screens */
+            max-height: 90vh; 
+            overflow-y: auto;
+        }
+        .dark-mode .modal-content {
+            background-color: #1a1a2e;
+            color: #eee;
+        }
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-button:hover {
+            color: #666;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6">
+    
+    
+ 
+        
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-200 min-h-screen flex items-center justify-center p-6 overflow-y-scroll">
+    <div class="bg-white rounded-2xl shadow-2xl p-10 max-w-5xl w-full relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute top-0 right-0 w-full h-full opacity-5 pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" class="w-full h-full">
+                <path fill="#4f46e5" d="M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z"></path>
+            </svg>
+        </div>
+        
+        <!-- Header -->
+        <header class="text-center mb-12 relative z-10">
+            <div class="inline-block mb-4">
+                <svg class="w-16 h-16 mx-auto text-indigo-600" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h1 class="text-5xl font-extrabold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                Nova: Loan Eligibility Checker
+            </h1>
+            <div class="h-1 w-24 bg-gradient-to-r font-bold from-blue-600 to-indigo-600 mx-auto my-4 rounded-full"></div>
+            <p class="text-gray-600 mt-3 text-3xl max-w-2xl mx-auto">Get Started</p>
+            <p class="text-sm text-gray-400 mt-2">Powered by <a href="https://www.grab.com/sg/" target="_blank" class="text-blue-500 hover:underline font-medium">Grab</a></p>
+   
+            
+       
+        </header>     
+
+        
+        <!-- Feedback Form -->
+        <section id="document-section" class="mt-8 bg-gray-50 p-6 rounded-lg border border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-700 mb-3">Details we need from you:</h3>
+            <ul>
+    <li><strong>Partner Type:</strong> Select whether you are a <em>Merchant</em> or a <em>Driver</em>. This helps the system know what type of user you are.</li>
+    
+    <li><strong>Earnings (Value):</strong> Enter your average monthly earnings on the platform. Must be 0 or higher. This helps assess financial eligibility.</li>
+    
+    <li><strong>Earnings (Stability Type):</strong> Choose how consistent your earnings are: <em>Stable</em>, <em>Variable</em>, or <em>Seasonal</em>. Stable income is usually favorable.</li>
+    
+    <li><strong>Performance Rating (Avg):</strong> Enter your average performance rating on the platform from 1 to 5 (decimals allowed, e.g., 4.5). High ratings indicate reliability.</li>
+    
+    <li><strong>Time on Platform (Months):</strong> Enter the number of months you have been active on the platform. Longer activity shows experience and commitment.</li>
+    
+    <li><strong>Order/Trip Volume:</strong> Enter the total number of orders or trips you have completed. Higher volumes indicate activity and reliability.</li>
+    
+    <li><strong>Financial Activity (Score):</strong> Enter a score between 0 and 1 representing your financial activity or responsibility on the platform. Higher scores indicate better behavior.</li>
+    
+    <li><strong>Earnings Volatility:</strong> Enter a number showing how much your earnings fluctuate. Lower numbers indicate more stable income.</li>
+    
+    <li><strong>On-Time Loan Repayments:</strong> Enter the number of loans you have repaid on time. Timely repayments show financial responsibility.</li>
+    
+    <li><strong>Operational Anomaly Score:</strong> Enter a score between 0 and 1 that shows unusual activity in your platform operations. Lower scores are better.</li>
+    
+  
+</ul>
+<h3 class="mt-5 text-lg font-semibold text-gray-700 mb-3">Results we provide you:</h3>
+<ul><li>Based on the information you provide in the form (earnings, ratings, time on platform, etc.), the system predicts whether you are eligible for a loan or not. Evaluation metrics returned for the model used are:</li>
+ <li><strong>Accuracy:</strong> The percentage of correct predictions out of all predictions. It shows how often the model predicts correctly.</li>
+    
+    <li><strong>Precision:</strong> The percentage of predicted "Eligible" users who are actually eligible. High precision means fewer false positives.</li>
+    
+    <li><strong>Recall (Sensitivity):</strong> The percentage of actual eligible users that were correctly predicted as eligible. High recall means fewer false negatives.</li>
+    
+    <li><strong>F1 Score:</strong> The harmonic mean of precision and recall. It provides a single metric to summarize the model’s performance, balancing false positives and false negatives.</li></ul>
+
+           
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+
+
+</body>
+
+</html>
