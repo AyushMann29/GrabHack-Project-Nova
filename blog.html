@@ -46,6 +46,7 @@
             margin: 0;
             padding: 0;
             overflow-y: scroll; /* Always show vertical scrollbar */
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         /* Custom scrollbar */
         ::-webkit-scrollbar {
@@ -65,7 +66,6 @@
         background: #4f46e5; /* Tailwind indigo-600 */
         }
 
-
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
@@ -77,9 +77,88 @@
         .icon-glow {
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
         }
+        
+        /* Dark Mode Styles */
+        .dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+            color: #eee;
+        }
+        .dark-mode .bg-white {
+            background-color: #16213e !important;
+        }
+        .dark-mode .text-slate-700, .dark-mode .text-slate-800, .dark-mode .text-slate-900 {
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .text-slate-200 {
+            color: #b0b0b0 !important;
+        }
+        .dark-mode .text-indigo-600 {
+            color: #818cf8 !important;
+        }
+        .dark-mode .bg-slate-50 {
+            background-color: #0f3460 !important;
+        }
+        .dark-mode .bg-slate-100 {
+            background-color: #1a1a2e !important;
+        }
+        .dark-mode .bg-white {
+            background-color: #16213e !important;
+        }
+        .dark-mode .border-slate-200 {
+            border-color: #2d3748 !important;
+        }
+        .dark-mode .shadow-md {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+        }
+        .dark-mode .bg-emerald-50 {
+            background-color: #064e3b !important;
+        }
+        .dark-mode .text-emerald-800 {
+            color: #a7f3d0 !important;
+        }
+        .dark-mode .border-emerald-500 {
+            border-color: #10b981 !important;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 overflow-y-scroll">
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg id="sunIcon" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+        </svg>
+        <svg id="moonIcon" class="hidden" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        </svg>
+    </button>
 
     <!-- Header Section -->
     <header class="relative text-white overflow-hidden">
@@ -215,6 +294,39 @@
         </div>
     </footer>
 
+    <!-- Theme Toggle Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const sunIcon = document.getElementById('sunIcon');
+            const moonIcon = document.getElementById('moonIcon');
+            const body = document.body;
+            
+            // Check for saved theme preference or use preferred color scheme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                body.classList.add('dark-mode');
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+            
+            // Toggle theme on button click
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark-mode');
+                
+                // Toggle icons
+                sunIcon.classList.toggle('hidden');
+                moonIcon.classList.toggle('hidden');
+                
+                // Save preference to localStorage
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
 
