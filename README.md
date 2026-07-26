@@ -234,7 +234,6 @@ python main.py
 | Environment | Base URL | Description |
 |-------------|----------|-------------|
 | **Local Development** | `http://127.0.0.1:5000` | Local Flask development server |
-| **Production** | `https://grabhack-project-nova.onrender.com` | Deployed production instance |
 
 ---
 
